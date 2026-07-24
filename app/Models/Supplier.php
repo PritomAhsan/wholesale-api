@@ -81,4 +81,9 @@ class Supplier extends Model
             'approved_by'
         );
     }
+
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
 }

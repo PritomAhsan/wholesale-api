@@ -62,4 +62,9 @@ class User extends Authenticatable
         return trim("{$this->first_name} {$this->last_name}");
     }
 
+    public function supplier()
+    {
+        return $this->hasOne(Supplier::class);
+    }
+
 }

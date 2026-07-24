@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\Supplier\SupplierController;
+use App\Http\Controllers\Api\V1\Admin\SupplierApprovalController;
 
 
 Route::prefix('v1')->group(function () {
@@ -22,6 +24,49 @@ Route::prefix('v1')->group(function () {
             Route::post('/logout', [AuthController::class, 'logout']);
 
         });
+
+    });
+
+    Route::middleware('auth:sanctum')->group(function () {
+
+        Route::post(
+            '/supplier/register',
+            [SupplierController::class,'register']
+        );
+
+    });
+
+    Route::middleware([
+        'auth:sanctum',
+        'role:Super Admin|Admin'
+    ])->group(function () {
+
+        Route::post(
+            '/admin/suppliers/{supplier}/approve',
+            [SupplierApprovalController::class, 'approve']
+        );
+
+        Route::post(
+            '/admin/suppliers/{supplier}/reject',
+            [SupplierApprovalController::class, 'reject']
+        );
+
+    });
+
+    Route::middleware([
+        'auth:sanctum',
+        'role:Super Admin|Admin'
+    ])->group(function () {
+
+        Route::get(
+            '/admin/suppliers/pending',
+            [SupplierController::class, 'pending']
+        );
+
+        Route::get(
+            '/admin/suppliers/approved',
+            [SupplierController::class, 'approved']
+        );
 
     });
 
