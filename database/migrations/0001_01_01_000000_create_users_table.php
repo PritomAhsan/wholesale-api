@@ -12,28 +12,47 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
+
             $table->id();
-            $table->string('name');
+
+            $table->uuid('uuid')->unique();
+
+            $table->string('first_name', 100);
+
+            $table->string('last_name', 100)->nullable();
+
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
+
+            $table->string('phone', 30)->nullable()->unique();
+
             $table->string('password');
+
+            $table->string('avatar')->nullable();
+
+            $table->enum('status', [
+                'pending',
+                'active',
+                'inactive',
+                'suspended',
+                'banned',
+            ])->default('pending');
+
+            $table->timestamp('email_verified_at')->nullable();
+
+            $table->timestamp('last_login_at')->nullable();
+
+            $table->string('last_login_ip', 45)->nullable();
+
             $table->rememberToken();
+
             $table->timestamps();
-        });
 
-        Schema::create('password_reset_tokens', function (Blueprint $table) {
-            $table->string('email')->primary();
-            $table->string('token');
-            $table->timestamp('created_at')->nullable();
-        });
+            $table->softDeletes();
 
-        Schema::create('sessions', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->foreignId('user_id')->nullable()->index();
-            $table->string('ip_address', 45)->nullable();
-            $table->text('user_agent')->nullable();
-            $table->longText('payload');
-            $table->integer('last_activity')->index();
+            // Indexes
+            $table->index('status');
+            $table->index('created_at');
+            $table->index('last_login_at');
         });
     }
 
