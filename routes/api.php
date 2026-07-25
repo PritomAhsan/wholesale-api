@@ -6,12 +6,18 @@ use App\Http\Controllers\Api\V1\Supplier\SupplierController;
 use App\Http\Controllers\Api\V1\Admin\SupplierApprovalController;
 use App\Http\Controllers\Api\V1\Admin\CategoryController;
 use App\Http\Controllers\Api\V1\Product\PublicCategoryController;
+use App\Http\Controllers\Api\V1\Admin\BrandController;
+use App\Http\Controllers\Api\V1\Product\PublicBrandController;
 
 
 Route::prefix('v1')->group(function () {
 
     Route::get('/categories', [PublicCategoryController::class, 'index']);
     Route::get('/categories/{category:slug}', [PublicCategoryController::class, 'show']);
+
+    Route::get('/brands', [PublicBrandController::class, 'index']);
+    Route::get('/brands/featured', [PublicBrandController::class, 'featured']);
+    Route::get('/brands/{brand:slug}', [PublicBrandController::class, 'show']);
 
     Route::prefix('auth')->group(function () {
 
@@ -81,6 +87,45 @@ Route::prefix('v1')->group(function () {
     ])->prefix('admin')->group(function () {
 
         Route::apiResource('categories', CategoryController::class);
+
+    });
+
+    Route::middleware([
+        'auth:sanctum',
+        'role:Super Admin|Admin'
+    ])
+    ->group(function () {
+
+        Route::prefix('admin')->group(function () {
+
+            Route::apiResource('brands', BrandController::class);
+
+            Route::post(
+                'brands/{brand}',
+                [BrandController::class, 'update']
+            );
+
+            Route::patch(
+                'brands/{brand}/toggle-status',
+                [BrandController::class, 'toggleStatus']
+            );
+
+            Route::patch(
+                'brands/{brand}/toggle-featured',
+                [BrandController::class, 'toggleFeatured']
+            );
+
+            Route::patch(
+                'brands/{uuid}/restore',
+                [BrandController::class, 'restore']
+            );
+
+            Route::delete(
+                'brands/{uuid}/force-delete',
+                [BrandController::class, 'forceDelete']
+            );
+
+        });
 
     });
 
