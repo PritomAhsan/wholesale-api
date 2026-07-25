@@ -4,9 +4,14 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Supplier\SupplierController;
 use App\Http\Controllers\Api\V1\Admin\SupplierApprovalController;
+use App\Http\Controllers\Api\V1\Admin\CategoryController;
+use App\Http\Controllers\Api\V1\Product\PublicCategoryController;
 
 
 Route::prefix('v1')->group(function () {
+
+    Route::get('/categories', [PublicCategoryController::class, 'index']);
+    Route::get('/categories/{category:slug}', [PublicCategoryController::class, 'show']);
 
     Route::prefix('auth')->group(function () {
 
@@ -67,6 +72,15 @@ Route::prefix('v1')->group(function () {
             '/admin/suppliers/approved',
             [SupplierController::class, 'approved']
         );
+
+    });
+
+    Route::middleware([
+        'auth:sanctum',
+        'role:Super Admin|Admin'
+    ])->prefix('admin')->group(function () {
+
+        Route::apiResource('categories', CategoryController::class);
 
     });
 
