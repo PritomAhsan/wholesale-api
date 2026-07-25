@@ -6,20 +6,46 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('attributes', function (Blueprint $table) {
+
             $table->id();
+
+            $table->uuid('uuid')->unique();
+
+            $table->foreignId('category_id')
+                ->nullable()
+                ->constrained()
+                ->nullOnDelete();
+
+            $table->string('name');
+
+            $table->string('slug')->unique();
+
+            $table->enum('type',[
+                'text',
+                'number',
+                'select',
+                'multiselect',
+                'boolean'
+            ])->default('text');
+
+            $table->boolean('is_filterable')->default(false);
+
+            $table->boolean('is_required')->default(false);
+
+            $table->boolean('status')->default(true);
+
+            $table->integer('sort_order')->default(0);
+
             $table->timestamps();
+
+            $table->softDeletes();
+
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('attributes');

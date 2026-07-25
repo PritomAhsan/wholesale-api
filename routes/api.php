@@ -10,6 +10,10 @@ use App\Http\Controllers\Api\V1\Admin\BrandController;
 use App\Http\Controllers\Api\V1\Product\PublicBrandController;
 use App\Http\Controllers\Api\V1\Admin\UnitController;
 use App\Http\Controllers\Api\V1\Product\PublicUnitController;
+use App\Http\Controllers\Api\V1\Admin\ProductAttributeController;
+use App\Http\Controllers\Api\V1\Product\PublicProductAttributeController;
+use App\Http\Controllers\Api\V1\Admin\ProductAttributeValueController;
+use App\Http\Controllers\Api\V1\Product\PublicProductAttributeValueController;
 
 
 Route::prefix('v1')->group(function () {
@@ -29,6 +33,16 @@ Route::prefix('v1')->group(function () {
     Route::get(
         '/units/{unit}',
         [PublicUnitController::class,'show']
+    );
+
+    Route::get(
+        '/product-attributes',
+        [PublicProductAttributeController::class, 'index']
+    );
+
+    Route::get(
+        '/product-attributes/{productAttribute}/values',
+        [PublicProductAttributeValueController::class, 'index']
     );
 
     Route::prefix('auth')->group(function () {
@@ -166,6 +180,69 @@ Route::prefix('v1')->group(function () {
         Route::delete(
             'units/{uuid}/force-delete',
             [UnitController::class,'forceDelete']
+        );
+
+    });
+
+    Route::middleware([
+        'auth:sanctum',
+        'role:Super Admin|Admin'
+    ])
+    ->prefix('admin')
+    ->group(function () {
+
+        Route::apiResource(
+            'product-attributes',
+            ProductAttributeController::class
+        );
+
+    });
+
+    Route::middleware([
+        'auth:sanctum',
+        'role:Super Admin|Admin'
+    ])
+    ->prefix('admin')
+    ->group(function () {
+
+        Route::get(
+            'product-attributes/{productAttribute}/values',
+            [ProductAttributeValueController::class, 'index']
+        );
+
+        Route::post(
+            'product-attributes/{productAttribute}/values',
+            [ProductAttributeValueController::class, 'store']
+        );
+
+        Route::get(
+            'product-attribute-values/{productAttributeValue}',
+            [ProductAttributeValueController::class, 'show']
+        );
+
+        Route::put(
+            'product-attribute-values/{productAttributeValue}',
+            [ProductAttributeValueController::class, 'update']
+        );
+
+        Route::delete(
+            'product-attribute-values/{productAttributeValue}',
+            [ProductAttributeValueController::class, 'destroy']
+        );
+
+        Route::patch(
+            'product-attribute-values/{productAttributeValue}/toggle-status',
+            [ProductAttributeValueController::class, 'toggleStatus']
+        );
+
+        Route::patch(
+            'product-attribute-values/{uuid}/restore',
+            [ProductAttributeValueController::class, 'restore']
+        );
+
+        Route::delete(
+            'product-attribute-values/{uuid}/force-delete',
+            [ProductAttributeValueController::class, 'forceDelete']
         );
 
     });

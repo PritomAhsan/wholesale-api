@@ -23,7 +23,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             // RoleSeeder::class,
             // BrandSeeder::class,
-            UnitSeeder::class,
+            // UnitSeeder::class,
+            AttributeSeeder::class,
         ]);
     }
 }
