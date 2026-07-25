@@ -6,20 +6,36 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('units', function (Blueprint $table) {
+
             $table->id();
+
+            $table->uuid('uuid')->unique();
+
+            $table->string('name');
+
+            $table->string('code',20)->unique();
+
+            $table->string('symbol',20)->nullable();
+
+            $table->text('description')->nullable();
+
+            $table->unsignedInteger('sort_order')->default(0);
+
+            $table->boolean('status')->default(true);
+
             $table->timestamps();
+
+            $table->softDeletes();
+
+            $table->index('status');
+            $table->index('sort_order');
+
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('units');

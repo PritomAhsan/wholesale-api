@@ -21,8 +21,9 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $this->call([
-            RoleSeeder::class,
-            BrandSeeder::class,
+            // RoleSeeder::class,
+            // BrandSeeder::class,
+            UnitSeeder::class,
         ]);
     }
 }

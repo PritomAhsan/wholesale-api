@@ -8,6 +8,8 @@ use App\Http\Controllers\Api\V1\Admin\CategoryController;
 use App\Http\Controllers\Api\V1\Product\PublicCategoryController;
 use App\Http\Controllers\Api\V1\Admin\BrandController;
 use App\Http\Controllers\Api\V1\Product\PublicBrandController;
+use App\Http\Controllers\Api\V1\Admin\UnitController;
+use App\Http\Controllers\Api\V1\Product\PublicUnitController;
 
 
 Route::prefix('v1')->group(function () {
@@ -18,6 +20,16 @@ Route::prefix('v1')->group(function () {
     Route::get('/brands', [PublicBrandController::class, 'index']);
     Route::get('/brands/featured', [PublicBrandController::class, 'featured']);
     Route::get('/brands/{brand:slug}', [PublicBrandController::class, 'show']);
+
+    Route::get(
+        '/units',
+        [PublicUnitController::class,'index']
+    );
+
+    Route::get(
+        '/units/{unit}',
+        [PublicUnitController::class,'show']
+    );
 
     Route::prefix('auth')->group(function () {
 
@@ -126,6 +138,35 @@ Route::prefix('v1')->group(function () {
             );
 
         });
+
+    });
+
+    Route::middleware([
+        'auth:sanctum',
+        'role:Super Admin|Admin'
+    ])
+    ->prefix('admin')
+    ->group(function(){
+
+        Route::apiResource(
+            'units',
+            UnitController::class
+        );
+
+        Route::patch(
+            'units/{unit}/toggle-status',
+            [UnitController::class,'toggleStatus']
+        );
+
+        Route::patch(
+            'units/{uuid}/restore',
+            [UnitController::class,'restore']
+        );
+
+        Route::delete(
+            'units/{uuid}/force-delete',
+            [UnitController::class,'forceDelete']
+        );
 
     });
 
