@@ -315,4 +315,11 @@ class Product extends Model
 
         )->withTimestamps();
     }
+
+    public function assignedAttributes()
+    {
+        return $this->hasMany(
+            ProductAssignedAttribute::class
+        );
+    }
 }

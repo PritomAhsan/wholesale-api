@@ -20,6 +20,19 @@ class ProductService
                     $data['category_ids']
                 );
             }
+
+            if (! empty($data['attributes'])) {
+                foreach ($data['attributes'] as $attribute) {
+                    $product
+                        ->assignedAttributes()
+                        ->create([
+                            'attribute_id' => $attribute['attribute_id'],
+                            'attribute_value_id' => $attribute['attribute_value_id'],
+                        ]);
+
+                }
+
+            }
         });
     }
 
@@ -35,6 +48,21 @@ class ProductService
                 $product->categories()->sync(
                     $data['category_ids']
                 );
+            }
+            $product
+                ->assignedAttributes()
+                ->delete();
+            if (! empty($data['attributes'])) {
+                foreach ($data['attributes'] as $attribute) {
+                    $product
+                        ->assignedAttributes()
+                        ->create([
+                            'attribute_id' => $attribute['attribute_id'],
+                            'attribute_value_id' => $attribute['attribute_value_id'],
+                        ]);
+
+                }
+
             }
             return $product->fresh(['supplier','brand','unit']);
         });

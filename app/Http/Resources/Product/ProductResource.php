@@ -99,6 +99,41 @@ class ProductResource extends JsonResource
 
             ),
 
+            'attributes' => $this->whenLoaded(
+                'assignedAttributes',
+                function () {
+
+                    return $this->assignedAttributes->map(
+
+                        function ($item) {
+
+                            return [
+
+                                'attribute' => [
+
+                                    'id' => $item->attribute->id,
+
+                                    'name' => $item->attribute->name,
+
+                                ],
+
+                                'value' => [
+
+                                    'id' => $item->value->id,
+
+                                    'value' => $item->value->value,
+
+                                ],
+
+                            ];
+
+                        }
+
+                    );
+
+                }
+            ),
+
             /*
             |--------------------------------------------------------------------------
             | Description

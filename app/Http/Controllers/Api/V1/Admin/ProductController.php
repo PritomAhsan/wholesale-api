@@ -270,6 +270,10 @@ class ProductController extends ApiController
 
                 'approver',
 
+                'assignedAttributes.attribute',
+
+                'assignedAttributes.value',
+
             ]);
     }
 
@@ -495,6 +499,10 @@ class ProductController extends ApiController
 
                         'approver',
 
+                        'assignedAttributes.attribute',
+
+                        'assignedAttributes.value',
+
                     ])
 
                 ),
@@ -545,6 +553,10 @@ class ProductController extends ApiController
                 'categories',
 
                 'approver',
+
+                'assignedAttributes.attribute',
+
+                'assignedAttributes.value',
 
             ]);
 
@@ -617,6 +629,10 @@ class ProductController extends ApiController
                         'categories',
 
                         'approver',
+
+                        'assignedAttributes.attribute',
+
+                        'assignedAttributes.value',
 
                     ])
 
@@ -726,6 +742,10 @@ class ProductController extends ApiController
 
                         'approver',
 
+                        'assignedAttributes.attribute',
+
+                        'assignedAttributes.value',
+
                     ])
 
                 ),
@@ -830,6 +850,8 @@ class ProductController extends ApiController
                         'unit',
                         'categories',
                         'approver',
+                        'assignedAttributes.attribute',
+                        'assignedAttributes.value',
                     ])
                 ),
 

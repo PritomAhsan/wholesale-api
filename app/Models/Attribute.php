@@ -75,4 +75,12 @@ class Attribute extends Model
     {
         return 'uuid';
     }
+
+    public function assignedProducts()
+    {
+        return $this->hasMany(
+            ProductAssignedAttribute::class,
+            'attribute_id'
+        );
+    }
 }

@@ -226,6 +226,21 @@ class ProductRequest extends FormRequest
                 'integer',
                 'exists:categories,id',
             ],
+
+            'attributes' => [
+                'nullable',
+                'array',
+            ],
+
+            'attributes.*.attribute_id' => [
+                'required',
+                'exists:attributes,id',
+            ],
+
+            'attributes.*.attribute_value_id' => [
+                'required',
+                'exists:attribute_values,id',
+            ],
         ];
     }
 
