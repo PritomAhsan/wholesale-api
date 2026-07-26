@@ -69,6 +69,36 @@ class ProductResource extends JsonResource
 
             }),
 
+            'categories' => $this->whenLoaded(
+
+                'categories',
+
+                function () {
+
+                    return $this->categories->map(
+
+                        function ($category) {
+
+                            return [
+
+                                'id' => $category->id,
+
+                                'uuid' => $category->uuid,
+
+                                'name' => $category->name,
+
+                                'slug' => $category->slug,
+
+                            ];
+
+                        }
+
+                    );
+
+                }
+
+            ),
+
             /*
             |--------------------------------------------------------------------------
             | Description

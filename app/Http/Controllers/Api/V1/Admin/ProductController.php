@@ -266,6 +266,8 @@ class ProductController extends ApiController
 
                 'unit',
 
+                'categories',
+
                 'approver',
 
             ]);
@@ -489,6 +491,8 @@ class ProductController extends ApiController
 
                         'unit',
 
+                        'categories',
+
                         'approver',
 
                     ])
@@ -537,6 +541,8 @@ class ProductController extends ApiController
                 'brand',
 
                 'unit',
+
+                'categories',
 
                 'approver',
 
@@ -607,6 +613,8 @@ class ProductController extends ApiController
                         'brand',
 
                         'unit',
+
+                        'categories',
 
                         'approver',
 
@@ -714,6 +722,8 @@ class ProductController extends ApiController
 
                         'unit',
 
+                        'categories',
+
                         'approver',
 
                     ])
@@ -818,6 +828,7 @@ class ProductController extends ApiController
                         'supplier',
                         'brand',
                         'unit',
+                        'categories',
                         'approver',
                     ])
                 ),

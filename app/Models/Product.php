@@ -304,4 +304,15 @@ class Product extends Model
     {
         return $this->status->label();
     }
+
+    public function categories()
+    {
+        return $this->belongsToMany(
+
+            Category::class,
+
+            'product_categories'
+
+        )->withTimestamps();
+    }
 }

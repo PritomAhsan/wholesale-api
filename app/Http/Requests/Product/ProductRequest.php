@@ -215,6 +215,17 @@ class ProductRequest extends FormRequest
                 'nullable',
                 'string',
             ],
+
+            'category_ids' => [
+                'required',
+                'array',
+                'min:1',
+            ],
+
+            'category_ids.*' => [
+                'integer',
+                'exists:categories,id',
+            ],
         ];
     }
 

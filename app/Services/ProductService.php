@@ -13,7 +13,13 @@ class ProductService
         return DB::transaction(function () use ($data) {
             $data['slug'] ??= Str::slug($data['name']);
             $data['sku'] ??= strtoupper('PRD-'.Str::random(8));
-            return Product::create($data);
+            $product = Product::create($data);
+
+            if (! empty($data['category_ids'])) {
+                $product->categories()->sync(
+                    $data['category_ids']
+                );
+            }
         });
     }
 
@@ -22,6 +28,14 @@ class ProductService
         return DB::transaction(function () use ($product,$data) {
             if (!empty($data['name']) && empty($data['slug'])) $data['slug']=Str::slug($data['name']);
             $product->update($data);
+            if (array_key_exists(
+                'category_ids',
+                $data
+            )) {
+                $product->categories()->sync(
+                    $data['category_ids']
+                );
+            }
             return $product->fresh(['supplier','brand','unit']);
         });
     }
