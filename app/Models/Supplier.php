@@ -82,6 +82,11 @@ class Supplier extends Model
         );
     }
 
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
     public function getRouteKeyName(): string
     {
         return 'uuid';

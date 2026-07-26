@@ -52,10 +52,10 @@ class Unit extends Model
         return 'uuid';
     }
 
-    // public function products()
-    // {
-    //     return $this->hasMany(Product::class);
-    // }
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 
     public function scopeActive($query)
     {

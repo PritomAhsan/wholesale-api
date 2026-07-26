@@ -1,0 +1,38 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Product;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
+
+class ProductService
+{
+    public function create(array $data): Product
+    {
+        return DB::transaction(function () use ($data) {
+            $data['slug'] ??= Str::slug($data['name']);
+            $data['sku'] ??= strtoupper('PRD-'.Str::random(8));
+            return Product::create($data);
+        });
+    }
+
+    public function update(Product $product, array $data): Product
+    {
+        return DB::transaction(function () use ($product,$data) {
+            if (!empty($data['name']) && empty($data['slug'])) $data['slug']=Str::slug($data['name']);
+            $product->update($data);
+            return $product->fresh(['supplier','brand','unit']);
+        });
+    }
+
+    public function delete(Product $product): void { $product->delete(); }
+    public function restore(string $uuid): Product { $p=Product::withTrashed()->where('uuid',$uuid)->firstOrFail(); $p->restore(); return $p; }
+    public function forceDelete(string $uuid): void { Product::withTrashed()->where('uuid',$uuid)->firstOrFail()->forceDelete(); }
+    public function publish(Product $product): Product { $product->update(['status'=>'published','published_at'=>now()]); return $product->fresh(); }
+    public function approve(Product $product,int $userId): Product { $product->update(['status'=>'approved','approved_at'=>now(),'approved_by'=>$userId]); return $product->fresh(); }
+    public function reject(Product $product): Product { $product->update(['status'=>'rejected']); return $product->fresh(); }
+    public function archive(Product $product): Product { $product->update(['status'=>'archived']); return $product->fresh(); }
+    public function toggleFeatured(Product $product): Product { $product->update(['featured'=>!$product->featured]); return $product->fresh(); }
+    public function updateStock(Product $product,int $quantity): Product { $product->update(['stock_quantity'=>$quantity]); return $product->fresh(); }
+}

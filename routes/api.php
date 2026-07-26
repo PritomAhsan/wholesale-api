@@ -14,7 +14,7 @@ use App\Http\Controllers\Api\V1\Admin\ProductAttributeController;
 use App\Http\Controllers\Api\V1\Product\PublicProductAttributeController;
 use App\Http\Controllers\Api\V1\Admin\ProductAttributeValueController;
 use App\Http\Controllers\Api\V1\Product\PublicProductAttributeValueController;
-
+use App\Http\Controllers\Api\V1\Admin\ProductController;
 
 Route::prefix('v1')->group(function () {
 
@@ -243,6 +243,54 @@ Route::prefix('v1')->group(function () {
         Route::delete(
             'product-attribute-values/{uuid}/force-delete',
             [ProductAttributeValueController::class, 'forceDelete']
+        );
+
+    });
+
+    Route::prefix('admin')
+    ->middleware(['auth:sanctum', 'role:Super Admin|Admin'])
+    ->group(function () {
+
+        Route::apiResource('products', ProductController::class);
+
+        Route::patch(
+            'products/{product}/restore',
+            [ProductController::class, 'restore']
+        );
+
+        Route::delete(
+            'products/{product}/force-delete',
+            [ProductController::class, 'forceDelete']
+        );
+
+        Route::patch(
+            'products/{product}/approve',
+            [ProductController::class, 'approve']
+        );
+
+        Route::patch(
+            'products/{product}/reject',
+            [ProductController::class, 'reject']
+        );
+
+        Route::patch(
+            'products/{product}/publish',
+            [ProductController::class, 'publish']
+        );
+
+        Route::patch(
+            'products/{product}/archive',
+            [ProductController::class, 'archive']
+        );
+
+        Route::patch(
+            'products/{product}/featured',
+            [ProductController::class, 'toggleFeatured']
+        );
+
+        Route::patch(
+            'products/{product}/stock',
+            [ProductController::class, 'updateStock']
         );
 
     });
