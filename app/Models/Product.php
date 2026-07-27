@@ -322,4 +322,11 @@ class Product extends Model
             ProductAssignedAttribute::class
         );
     }
+
+    public function variants()
+    {
+        return $this->hasMany(
+            ProductVariant::class
+        );
+    }
 }

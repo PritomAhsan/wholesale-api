@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\V1\Product\PublicProductAttributeController;
 use App\Http\Controllers\Api\V1\Admin\ProductAttributeValueController;
 use App\Http\Controllers\Api\V1\Product\PublicProductAttributeValueController;
 use App\Http\Controllers\Api\V1\Admin\ProductController;
+use App\Http\Controllers\Api\V1\Admin\ProductVariantController;
 
 Route::prefix('v1')->group(function () {
 
@@ -295,4 +296,57 @@ Route::prefix('v1')->group(function () {
 
     });
 
+    Route::middleware([
+        'auth:sanctum',
+        'role:Super Admin|Admin|Supplier',
+    ])
+    ->prefix('admin')
+    ->group(function () {
+
+        Route::prefix('products/{product}')
+            ->group(function () {
+
+                Route::get(
+                    'variants',
+                    [ProductVariantController::class, 'index']
+                );
+
+                Route::post(
+                    'variants',
+                    [ProductVariantController::class, 'store']
+                );
+
+                Route::get(
+                    'variants/{variant}',
+                    [ProductVariantController::class, 'show']
+                );
+
+                Route::put(
+                    'variants/{variant}',
+                    [ProductVariantController::class, 'update']
+                );
+
+                Route::patch(
+                    'variants/{variant}',
+                    [ProductVariantController::class, 'update']
+                );
+
+                Route::delete(
+                    'variants/{variant}',
+                    [ProductVariantController::class, 'destroy']
+                );
+
+                Route::patch(
+                    'variants/{uuid}/restore',
+                    [ProductVariantController::class, 'restore']
+                );
+
+                Route::delete(
+                    'variants/{uuid}/force-delete',
+                    [ProductVariantController::class, 'forceDelete']
+                );
+
+            });
+
+    });
 });
