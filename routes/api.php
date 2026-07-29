@@ -21,6 +21,9 @@ use App\Http\Controllers\Api\V1\Admin\ProductVariantImageController;
 use App\Http\Controllers\Api\V1\Admin\ProductVariantInventoryController;
 use App\Http\Controllers\Api\V1\Admin\InventoryReportController;
 use App\Http\Controllers\Api\V1\Admin\ProductApprovalController;
+use App\Http\Controllers\Api\V1\Admin\ProductStatusController;
+use App\Http\Controllers\Api\V1\Admin\ProductQueryController;
+
 
 Route::prefix('v1')->group(function () {
 
@@ -504,6 +507,45 @@ Route::prefix('v1')->group(function () {
             Route::get(
                 'suppliers/{user}/approval/history',
                 [ProductApprovalController::class, 'supplierHistory']
+            );
+
+        });
+
+        Route::prefix('products/{product}/status')->group(function () {
+
+            Route::post(
+                '/publish',
+                [ProductStatusController::class, 'publish']
+            );
+
+            Route::post(
+                '/unpublish',
+                [ProductStatusController::class, 'unpublish']
+            );
+
+            Route::post(
+                '/archive',
+                [ProductStatusController::class, 'archive']
+            );
+
+            Route::post(
+                '/restore',
+                [ProductStatusController::class, 'restore']
+            );
+
+            Route::get(
+                '/history',
+                [ProductStatusController::class, 'history']
+            );
+
+            Route::get(
+                'products',
+                [ProductQueryController::class, 'index']
+            );
+
+            Route::get(
+                'products/statistics',
+                [ProductQueryController::class, 'statistics']
             );
 
         });

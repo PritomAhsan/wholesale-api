@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use App\Enums\ProductStatus;
+use App\Models\ProductStatusHistory;
 
 class Product extends Model
 {
@@ -351,5 +352,11 @@ class Product extends Model
     {
         return $this->hasOne(ProductApproval::class)
             ->latestOfMany();
+    }
+
+    public function statusHistory()
+    {
+        return $this->hasMany(ProductStatusHistory::class)
+            ->latest('performed_at');
     }
 }
