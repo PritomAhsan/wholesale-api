@@ -146,4 +146,16 @@ class ProductVariant extends Model
 
         );
     }
+
+    public function images()
+    {
+        return $this->hasMany(ProductVariantImage::class)
+            ->orderBy('sort_order');
+    }
+
+    public function primaryImage()
+    {
+        return $this->hasOne(ProductVariantImage::class)
+            ->where('is_primary', true);
+    }
 }

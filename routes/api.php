@@ -16,6 +16,8 @@ use App\Http\Controllers\Api\V1\Admin\ProductAttributeValueController;
 use App\Http\Controllers\Api\V1\Product\PublicProductAttributeValueController;
 use App\Http\Controllers\Api\V1\Admin\ProductController;
 use App\Http\Controllers\Api\V1\Admin\ProductVariantController;
+use App\Http\Controllers\Api\V1\Admin\ProductImageController;
+use App\Http\Controllers\Api\V1\Admin\ProductVariantImageController;
 
 Route::prefix('v1')->group(function () {
 
@@ -306,47 +308,102 @@ Route::prefix('v1')->group(function () {
         Route::prefix('products/{product}')
             ->group(function () {
 
-                Route::get(
-                    'variants',
-                    [ProductVariantController::class, 'index']
-                );
+            Route::get(
+                'variants',
+                [ProductVariantController::class, 'index']
+            );
 
-                Route::post(
-                    'variants',
-                    [ProductVariantController::class, 'store']
-                );
+            Route::post(
+                'variants',
+                [ProductVariantController::class, 'store']
+            );
 
-                Route::get(
-                    'variants/{variant}',
-                    [ProductVariantController::class, 'show']
-                );
+            Route::get(
+                'variants/{variant}',
+                [ProductVariantController::class, 'show']
+            );
 
-                Route::put(
-                    'variants/{variant}',
-                    [ProductVariantController::class, 'update']
-                );
+            Route::put(
+                'variants/{variant}',
+                [ProductVariantController::class, 'update']
+            );
 
-                Route::patch(
-                    'variants/{variant}',
-                    [ProductVariantController::class, 'update']
-                );
+            Route::patch(
+                'variants/{variant}',
+                [ProductVariantController::class, 'update']
+            );
 
-                Route::delete(
-                    'variants/{variant}',
-                    [ProductVariantController::class, 'destroy']
-                );
+            Route::delete(
+                'variants/{variant}',
+                [ProductVariantController::class, 'destroy']
+            );
 
-                Route::patch(
-                    'variants/{uuid}/restore',
-                    [ProductVariantController::class, 'restore']
-                );
+            Route::patch(
+                'variants/{uuid}/restore',
+                [ProductVariantController::class, 'restore']
+            );
 
-                Route::delete(
-                    'variants/{uuid}/force-delete',
-                    [ProductVariantController::class, 'forceDelete']
-                );
+            Route::delete(
+                'variants/{uuid}/force-delete',
+                [ProductVariantController::class, 'forceDelete']
+            );
 
-            });
+        });
+
+        Route::prefix('products/{product}')->group(function () {
+
+            Route::post(
+                'images',
+                [ProductImageController::class, 'upload']
+            );
+
+            Route::put(
+                'images/{image}',
+                [ProductImageController::class, 'update']
+            );
+
+            Route::patch(
+                'images/{image}',
+                [ProductImageController::class, 'update']
+            );
+
+            Route::delete(
+                'images/{image}',
+                [ProductImageController::class, 'destroy']
+            );
+
+            Route::patch(
+                'images/{image}/primary',
+                [ProductImageController::class, 'setPrimary']
+            );
+
+            Route::patch(
+                'images/reorder',
+                [ProductImageController::class, 'reorder']
+            );
+
+        });
 
     });
+
+    Route::prefix('products/{product}/variants/{variant}')->group(function () {
+
+        Route::post(
+            'images',
+            [ProductVariantImageController::class, 'upload']
+        );
+
+        Route::delete(
+            'images/{image}',
+            [ProductVariantImageController::class, 'destroy']
+        );
+
+        Route::patch(
+            'images/{image}/primary',
+            [ProductVariantImageController::class, 'setPrimary']
+        );
+
+    });
+
+
 });
