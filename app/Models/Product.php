@@ -108,7 +108,6 @@ class Product extends Model
         'width' => 'decimal:2',
 
         'height' => 'decimal:2',
-
     ];
 
     protected static function booted()
@@ -340,5 +339,17 @@ class Product extends Model
     {
         return $this->hasOne(ProductImage::class)
             ->where('is_primary', true);
+    }
+
+    public function approvals()
+    {
+        return $this->hasMany(ProductApproval::class)
+            ->latest();
+    }
+
+    public function latestApproval()
+    {
+        return $this->hasOne(ProductApproval::class)
+            ->latestOfMany();
     }
 }

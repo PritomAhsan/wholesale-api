@@ -14,6 +14,8 @@ enum ProductStatus: string
 
     case PUBLISHED = 'published';
 
+    case UNPUBLISHED = 'unpublished';
+
     case ARCHIVED = 'archived';
 
     public function label(): string
@@ -29,6 +31,8 @@ enum ProductStatus: string
             self::REJECTED => 'Rejected',
 
             self::PUBLISHED => 'Published',
+
+            self::UNPUBLISHED => 'Unpublished',
 
             self::ARCHIVED => 'Archived',
 

@@ -20,6 +20,7 @@ use App\Http\Controllers\Api\V1\Admin\ProductImageController;
 use App\Http\Controllers\Api\V1\Admin\ProductVariantImageController;
 use App\Http\Controllers\Api\V1\Admin\ProductVariantInventoryController;
 use App\Http\Controllers\Api\V1\Admin\InventoryReportController;
+use App\Http\Controllers\Api\V1\Admin\ProductApprovalController;
 
 Route::prefix('v1')->group(function () {
 
@@ -459,6 +460,50 @@ Route::prefix('v1')->group(function () {
             Route::get(
                 'reports/recent-transactions',
                 [InventoryReportController::class, 'recentTransactions']
+            );
+
+        });
+
+        Route::prefix('products')->group(function () {
+
+            Route::get(
+                'approval/pending',
+                [ProductApprovalController::class, 'pending']
+            );
+
+            Route::post(
+                '{product}/approval/submit',
+                [ProductApprovalController::class, 'submit']
+            );
+
+            Route::post(
+                '{product}/approval/approve',
+                [ProductApprovalController::class, 'approve']
+            );
+
+            Route::post(
+                '{product}/approval/reject',
+                [ProductApprovalController::class, 'reject']
+            );
+
+            Route::get(
+                '{product}/approval/history',
+                [ProductApprovalController::class, 'history']
+            );
+
+            Route::get(
+                'products/{product}/approval/timeline',
+                [ProductApprovalController::class, 'timeline']
+            );
+
+            Route::get(
+                'products/approval/statistics',
+                [ProductApprovalController::class, 'statistics']
+            );
+
+            Route::get(
+                'suppliers/{user}/approval/history',
+                [ProductApprovalController::class, 'supplierHistory']
             );
 
         });
