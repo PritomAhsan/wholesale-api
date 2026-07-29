@@ -18,6 +18,8 @@ use App\Http\Controllers\Api\V1\Admin\ProductController;
 use App\Http\Controllers\Api\V1\Admin\ProductVariantController;
 use App\Http\Controllers\Api\V1\Admin\ProductImageController;
 use App\Http\Controllers\Api\V1\Admin\ProductVariantImageController;
+use App\Http\Controllers\Api\V1\Admin\ProductVariantInventoryController;
+use App\Http\Controllers\Api\V1\Admin\InventoryReportController;
 
 Route::prefix('v1')->group(function () {
 
@@ -384,25 +386,82 @@ Route::prefix('v1')->group(function () {
 
         });
 
-    });
+        Route::prefix('products/{product}/variants/{variant}')->group(function () {
 
-    Route::prefix('products/{product}/variants/{variant}')->group(function () {
+            Route::post(
+                'images',
+                [ProductVariantImageController::class, 'upload']
+            );
 
-        Route::post(
-            'images',
-            [ProductVariantImageController::class, 'upload']
-        );
+            Route::delete(
+                'images/{image}',
+                [ProductVariantImageController::class, 'destroy']
+            );
 
-        Route::delete(
-            'images/{image}',
-            [ProductVariantImageController::class, 'destroy']
-        );
+            Route::patch(
+                'images/{image}/primary',
+                [ProductVariantImageController::class, 'setPrimary']
+            );
 
-        Route::patch(
-            'images/{image}/primary',
-            [ProductVariantImageController::class, 'setPrimary']
-        );
+        });
 
+        Route::prefix('variants/{variant}/inventory')->group(function () {
+
+            Route::get(
+                '/',
+                [ProductVariantInventoryController::class, 'show']
+            );
+
+            Route::post(
+                '/increase',
+                [ProductVariantInventoryController::class, 'increase']
+            );
+
+            Route::post(
+                '/decrease',
+                [ProductVariantInventoryController::class, 'decrease']
+            );
+
+            Route::post(
+                '/adjust',
+                [ProductVariantInventoryController::class, 'adjust']
+            );
+
+            Route::get(
+                '/history',
+                [ProductVariantInventoryController::class, 'history']
+            );
+
+        });
+
+        Route::prefix('inventory')->group(function () {
+
+            Route::get(
+                'dashboard',
+                [InventoryReportController::class, 'dashboard']
+            );
+
+            Route::get(
+                'reports/low-stock',
+                [InventoryReportController::class, 'lowStock']
+            );
+
+            Route::get(
+                'reports/out-of-stock',
+                [InventoryReportController::class, 'outOfStock']
+            );
+
+            Route::get(
+                'reports/value',
+                [InventoryReportController::class, 'inventoryValue']
+            );
+
+            Route::get(
+                'reports/recent-transactions',
+                [InventoryReportController::class, 'recentTransactions']
+            );
+
+        });
     });
 
 

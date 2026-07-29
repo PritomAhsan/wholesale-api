@@ -158,4 +158,10 @@ class ProductVariant extends Model
         return $this->hasOne(ProductVariantImage::class)
             ->where('is_primary', true);
     }
+
+    public function inventoryTransactions()
+    {
+        return $this->hasMany(InventoryTransaction::class)
+            ->latest();
+    }
 }
