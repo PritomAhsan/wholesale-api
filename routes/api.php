@@ -117,8 +117,8 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::middleware([
-        'auth:sanctum',
-        'role:Super Admin|Admin'
+        // 'auth:sanctum',
+        // 'role:Super Admin|Admin'
     ])->prefix('admin')->group(function () {
 
         Route::apiResource('categories', CategoryController::class);
