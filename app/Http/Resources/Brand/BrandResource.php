@@ -11,6 +11,8 @@ class BrandResource extends JsonResource
     {
         return [
 
+            'id' => $this->id,
+
             'uuid' => $this->uuid,
 
             'name' => $this->name,
@@ -27,11 +29,11 @@ class BrandResource extends JsonResource
 
             'status' => (bool) $this->status,
 
-            // 'products_count' => $this->whenLoaded(
-            //     'products',
-            //     fn () => $this->products->count(),
-            //     $this->products()->count()
-            // ),
+            'products_count' => $this->whenLoaded(
+                'products',
+                fn () => $this->products->count(),
+                $this->products()->count()
+            ),
 
             'created_at' => $this->created_at,
 

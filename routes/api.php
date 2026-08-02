@@ -126,8 +126,8 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::middleware([
-        'auth:sanctum',
-        'role:Super Admin|Admin'
+        // 'auth:sanctum',
+        // 'role:Super Admin|Admin'
     ])
     ->group(function () {
 

@@ -66,12 +66,6 @@ class BrandController extends ApiController
      */
     public function store(BrandRequest $request)
     {
-        dd([
-        'all' => $request->all(),
-        'files' => $request->allFiles(),
-        'content_type' => $request->header('Content-Type'),
-    ]);
-
         $brand = $this->brandService->create(
             $request->validated()
         );
