@@ -257,7 +257,7 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::prefix('admin')
-    ->middleware(['auth:sanctum', 'role:Super Admin|Admin'])
+    // ->middleware(['auth:sanctum', 'role:Super Admin|Admin'])
     ->group(function () {
 
         Route::apiResource('products', ProductController::class);
