@@ -5,8 +5,8 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Api\V1\ApiController;
 use App\Http\Requests\ProductAttribute\ProductAttributeValueRequest;
 use App\Http\Resources\ProductAttribute\ProductAttributeValueResource;
-use App\Models\ProductAttribute;
-use App\Models\ProductAttributeValue;
+use App\Models\Attribute;
+use App\Models\AttributeValue;
 use App\Services\ProductAttributeValueService;
 use Illuminate\Http\Request;
 
@@ -22,7 +22,7 @@ class ProductAttributeValueController extends ApiController
      */
     public function index(
         Request $request,
-        ProductAttribute $productAttribute
+        Attribute $productAttribute
     ) {
         $values = $productAttribute
             ->values()
@@ -84,7 +84,7 @@ class ProductAttributeValueController extends ApiController
      */
     public function store(
         ProductAttributeValueRequest $request,
-        ProductAttribute $productAttribute
+        Attribute $productAttribute
     ) {
 
         $value = $this->service->create(
@@ -108,7 +108,7 @@ class ProductAttributeValueController extends ApiController
      * Display a single Product Attribute Value.
      */
     public function show(
-        ProductAttributeValue $productAttributeValue
+        AttributeValue $productAttributeValue
     ) {
 
         return $this->success([
@@ -127,7 +127,7 @@ class ProductAttributeValueController extends ApiController
      */
     public function update(
         ProductAttributeValueRequest $request,
-        ProductAttributeValue $productAttributeValue
+        AttributeValue $productAttributeValue
     ) {
 
         $value = $this->service->update(
@@ -153,7 +153,7 @@ class ProductAttributeValueController extends ApiController
      * Delete Product Attribute Value.
      */
     public function destroy(
-        ProductAttributeValue $productAttributeValue
+        AttributeValue $productAttributeValue
     ) {
 
         $this->service->delete($productAttributeValue);
@@ -205,7 +205,7 @@ class ProductAttributeValueController extends ApiController
      * Toggle Status.
      */
     public function toggleStatus(
-        ProductAttributeValue $productAttributeValue
+        AttributeValue $productAttributeValue
     ) {
 
         $value = $this->service->toggleStatus(

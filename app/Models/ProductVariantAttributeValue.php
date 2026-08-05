@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
+
 class ProductVariantAttributeValue extends Model
 {
     protected $fillable = [
@@ -27,7 +28,7 @@ class ProductVariantAttributeValue extends Model
     public function attribute()
     {
         return $this->belongsTo(
-            ProductAttribute::class,
+            Attribute::class,
             'attribute_id'
         );
     }
@@ -35,7 +36,7 @@ class ProductVariantAttributeValue extends Model
     public function value()
     {
         return $this->belongsTo(
-            ProductAttributeValue::class,
+            AttributeValue::class,
             'attribute_value_id'
         );
     }

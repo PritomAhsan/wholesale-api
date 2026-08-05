@@ -2,17 +2,17 @@
 
 namespace App\Services;
 
-use App\Models\ProductAttribute;
+use App\Models\Attribute;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class ProductAttributeService
 {
-    public function create(array $data): ProductAttribute
+    public function create(array $data): Attribute
     {
         return DB::transaction(function () use ($data) {
 
-            return ProductAttribute::create([
+            return Attribute::create([
 
                 'uuid' => (string) Str::uuid(),
 
@@ -38,9 +38,9 @@ class ProductAttributeService
     }
 
     public function update(
-        ProductAttribute $attribute,
+        Attribute $attribute,
         array $data
-    ): ProductAttribute {
+    ): Attribute {
 
         return DB::transaction(function () use ($attribute, $data) {
 
@@ -69,14 +69,14 @@ class ProductAttributeService
         });
     }
 
-    public function delete(ProductAttribute $attribute): void
+    public function delete(Attribute $attribute): void
     {
         $attribute->delete();
     }
 
-    public function restore(string $uuid): ProductAttribute
+    public function restore(string $uuid): Attribute
     {
-        $attribute = ProductAttribute::withTrashed()
+        $attribute = Attribute::withTrashed()
             ->where('uuid', $uuid)
             ->firstOrFail();
 
@@ -87,15 +87,15 @@ class ProductAttributeService
 
     public function forceDelete(string $uuid): void
     {
-        ProductAttribute::withTrashed()
+        Attribute::withTrashed()
             ->where('uuid', $uuid)
             ->firstOrFail()
             ->forceDelete();
     }
 
     public function toggleStatus(
-        ProductAttribute $attribute
-    ): ProductAttribute {
+        Attribute $attribute
+    ): Attribute {
 
         $attribute->update([
             'status' => ! $attribute->status,

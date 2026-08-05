@@ -4,12 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use App\Enums\VariantAvailability;
+use Illuminate\Support\Str;
 
 class ProductVariant extends Model
 {
-    use HasUuids;
     use SoftDeletes;
 
     protected $fillable = [
@@ -79,6 +78,15 @@ class ProductVariant extends Model
         'attributeValues.value',
 
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function ($variant) {
+            if (empty($variant->uuid)) {
+                $variant->uuid = (string) Str::uuid();
+            }
+        });
+    }
 
     public function product()
     {

@@ -225,14 +225,82 @@ class ProductResource extends JsonResource
             | These will be populated in Batch 6.4
             */
 
-            'primary_image' => $this->when(
-                isset($this->primary_image),
-                $this->primary_image
+            'images' => $this->whenLoaded(
+                'images',
+                function () {
+                    return $this->images->map(
+                        function ($image) {
+                            return [
+
+                                'id' => $image->id,
+
+                                'uuid' => $image->uuid,
+
+                                'image' => $image->image_url,
+
+                                'alt_text' => $image->alt_text,
+
+                                'is_primary' => (bool) $image->is_primary,
+
+                                'sort_order' => $image->sort_order,
+
+                            ];
+                        }
+                    );
+                }
             ),
 
-            'gallery' => $this->when(
-                isset($this->gallery),
-                $this->gallery
+            'variants' => $this->whenLoaded(
+                'variants',
+                function () {
+                    return $this->variants->map(
+                        function ($variant) {
+                            return [
+
+                                'id' => $variant->id,
+
+                                'uuid' => $variant->uuid,
+
+                                'sku' => $variant->sku,
+
+                                'barcode' => $variant->barcode,
+
+                                'cost_price' => $variant->cost_price,
+
+                                'selling_price' => $variant->selling_price,
+
+                                'compare_at_price' => $variant->compare_at_price,
+
+                                'wholesale_price' => $variant->wholesale_price,
+
+                                'stock_quantity' => $variant->stock_quantity,
+
+                                'low_stock_quantity' => $variant->low_stock_quantity,
+
+                                'minimum_order_quantity' => $variant->minimum_order_quantity,
+
+                                'maximum_order_quantity' => $variant->maximum_order_quantity,
+
+                                'weight' => $variant->weight,
+
+                                'length' => $variant->length,
+
+                                'width' => $variant->width,
+
+                                'height' => $variant->height,
+
+                                'is_active' => (bool) $variant->is_active,
+
+                                'is_default' => (bool) $variant->is_default,
+
+                                'sort_order' => $variant->sort_order,
+
+                                'availability' => $variant->availability,
+
+                            ];
+                        }
+                    );
+                }
             ),
 
             /*

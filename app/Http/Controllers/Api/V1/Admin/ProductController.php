@@ -6,6 +6,7 @@ use App\Enums\ProductStatus;
 use App\Http\Controllers\Api\V1\ApiController;
 use App\Http\Requests\Product\ProductRequest;
 use App\Http\Resources\Product\ProductResource;
+use App\Http\Resources\Product\ProductListResource;
 use App\Models\Product;
 use App\Services\ProductService;
 use Illuminate\Database\Eloquent\Builder;
@@ -274,7 +275,24 @@ class ProductController extends ApiController
 
                 'assignedAttributes.value',
 
-            ]);
+                'images',
+
+                'variants',
+
+            ])
+
+            ->withCount([
+
+                'variants',
+
+                'approvals',
+
+            ])
+
+            ->withSum(
+                'variants',
+                'stock_quantity'
+            );
     }
 
         /*
@@ -389,7 +407,7 @@ class ProductController extends ApiController
 
             return $this->success([
 
-                'products' => ProductResource::collection(
+                'products' => ProductListResource::collection(
                     $products->items()
                 ),
 
@@ -503,6 +521,10 @@ class ProductController extends ApiController
 
                         'assignedAttributes.value',
 
+                        'images',
+    'variants.attributeValues.attribute',
+    'variants.attributeValues.value',
+
                     ])
 
                 ),
@@ -550,6 +572,8 @@ class ProductController extends ApiController
 
                 'unit',
 
+                'variants',
+
                 'categories',
 
                 'approver',
@@ -557,6 +581,10 @@ class ProductController extends ApiController
                 'assignedAttributes.attribute',
 
                 'assignedAttributes.value',
+
+                'images',
+    'variants.attributeValues.attribute',
+    'variants.attributeValues.value',
 
             ]);
 
@@ -568,7 +596,7 @@ class ProductController extends ApiController
 
                 ),
 
-            ], 'Product details fetched successfully.');
+            ], 'Product detail fetched successfully .');
 
         } catch (Throwable $exception) {
 
@@ -633,6 +661,10 @@ class ProductController extends ApiController
                         'assignedAttributes.attribute',
 
                         'assignedAttributes.value',
+
+                        'images',
+    'variants.attributeValues.attribute',
+    'variants.attributeValues.value',
 
                     ])
 
@@ -746,6 +778,10 @@ class ProductController extends ApiController
 
                         'assignedAttributes.value',
 
+                        'images',
+    'variants.attributeValues.attribute',
+    'variants.attributeValues.value',
+
                     ])
 
                 ),
@@ -852,6 +888,9 @@ class ProductController extends ApiController
                         'approver',
                         'assignedAttributes.attribute',
                         'assignedAttributes.value',
+                        'images',
+    'variants.attributeValues.attribute',
+    'variants.attributeValues.value',
                     ])
                 ),
 

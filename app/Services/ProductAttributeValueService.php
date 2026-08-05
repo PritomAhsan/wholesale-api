@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
-use App\Models\ProductAttribute;
-use App\Models\ProductAttributeValue;
+use App\Models\Attribute;
+use App\Models\AttributeValue;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -13,16 +13,16 @@ class ProductAttributeValueService
      * Create Attribute Value
      */
     public function create(
-        ProductAttribute $attribute,
+        Attribute $attribute,
         array $data
-    ): ProductAttributeValue {
+    ): AttributeValue {
 
         return DB::transaction(function () use (
             $attribute,
             $data
         ) {
 
-            return ProductAttributeValue::create([
+            return AttributeValue::create([
 
                 'uuid' => (string) Str::uuid(),
 
@@ -43,9 +43,9 @@ class ProductAttributeValueService
      * Update Attribute Value
      */
     public function update(
-        ProductAttributeValue $value,
+        AttributeValue $value,
         array $data
-    ): ProductAttributeValue {
+    ): AttributeValue {
 
         return DB::transaction(function () use (
             $value,
@@ -71,7 +71,7 @@ class ProductAttributeValueService
      * Soft Delete
      */
     public function delete(
-        ProductAttributeValue $value
+        AttributeValue $value
     ): void {
 
         $value->delete();
@@ -83,9 +83,9 @@ class ProductAttributeValueService
      */
     public function restore(
         string $uuid
-    ): ProductAttributeValue {
+    ): AttributeValue {
 
-        $value = ProductAttributeValue::withTrashed()
+        $value = AttributeValue::withTrashed()
 
             ->where('uuid', $uuid)
 
@@ -103,7 +103,7 @@ class ProductAttributeValueService
         string $uuid
     ): void {
 
-        ProductAttributeValue::withTrashed()
+        AttributeValue::withTrashed()
 
             ->where('uuid', $uuid)
 
@@ -117,8 +117,8 @@ class ProductAttributeValueService
      * Toggle Status
      */
     public function toggleStatus(
-        ProductAttributeValue $value
-    ): ProductAttributeValue {
+        AttributeValue $value
+    ): AttributeValue {
 
         $value->update([
 

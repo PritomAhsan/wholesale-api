@@ -19,11 +19,17 @@ class ProductListResource extends JsonResource
 
             'sku' => $this->sku,
 
-            'status' => $this->status,
+            'status' => $this->status?->value,
+
+            'status_label' => $this->status_label,
 
             'featured' => (bool) $this->featured,
 
             'price' => $this->price,
+
+            'selling_price' => $this->selling_price,
+
+            'formatted_price' => $this->formatted_price,
 
             'supplier' => [
 
@@ -45,8 +51,7 @@ class ProductListResource extends JsonResource
                 ->pluck('name')
                 ->values(),
 
-            'stock' => $this->variants
-                ->sum('stock_quantity'),
+            'stock' => $this->variants_sum_stock_quantity ?? 0,
 
             'variants_count' => $this->variants_count,
 

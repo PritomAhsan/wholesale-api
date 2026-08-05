@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 use App\Http\Controllers\Api\V1\ApiController;
 use App\Http\Requests\ProductAttribute\ProductAttributeRequest;
 use App\Http\Resources\ProductAttribute\ProductAttributeResource;
-use App\Models\ProductAttribute;
+use App\Models\Attribute;
 use App\Services\ProductAttributeService;
 use Illuminate\Http\Request;
 
@@ -17,7 +17,7 @@ class ProductAttributeController extends ApiController
 
     public function index(Request $request)
     {
-        $attributes = ProductAttribute::query()
+        $attributes = Attribute::query()
             ->with('category')
             ->withCount('values')
             ->when(
@@ -55,7 +55,7 @@ class ProductAttributeController extends ApiController
         ], 'Product attribute created successfully.', 201);
     }
 
-    public function show(ProductAttribute $productAttribute)
+    public function show(Attribute $productAttribute)
     {
         return $this->success([
             'attribute' => new ProductAttributeResource(
@@ -66,7 +66,7 @@ class ProductAttributeController extends ApiController
 
     public function update(
         ProductAttributeRequest $request,
-        ProductAttribute $productAttribute
+        Attribute $productAttribute
     ) {
         $attribute = $this->service->update(
             $productAttribute,
@@ -78,7 +78,7 @@ class ProductAttributeController extends ApiController
         ], 'Product attribute updated successfully.');
     }
 
-    public function destroy(ProductAttribute $productAttribute)
+    public function destroy(Attribute $productAttribute)
     {
         $this->service->delete($productAttribute);
 
