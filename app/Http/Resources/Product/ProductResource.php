@@ -35,6 +35,8 @@ class ProductResource extends JsonResource
 
                 return [
 
+                    'id' => $this->supplier->id,
+
                     'uuid' => $this->supplier->uuid,
 
                     'company_name' => $this->supplier->company_name,
@@ -47,6 +49,8 @@ class ProductResource extends JsonResource
 
                 return [
 
+                    'id' => $this->brand->id,
+
                     'uuid' => $this->brand->uuid,
 
                     'name' => $this->brand->name,
@@ -58,6 +62,8 @@ class ProductResource extends JsonResource
             'unit' => $this->whenLoaded('unit', function () {
 
                 return [
+
+                    'id' => $this->unit->id,
 
                     'uuid' => $this->unit->uuid,
 

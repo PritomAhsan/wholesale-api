@@ -5,9 +5,13 @@ namespace App\Services;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use App\Services\Product\ProductImageService;
 
 class ProductService
 {
+    public function __construct(
+        protected ProductImageService $imageService
+    ) {}
     /**
      * Create Product
      */
@@ -182,6 +186,65 @@ class ProductService
             }
 
             /*
+|--------------------------------------------------------------------------
+| Existing Images
+|--------------------------------------------------------------------------
+*/
+
+if (!empty($data['deleted_image_ids'])) {
+
+    $this->imageService
+        ->deleteImages(
+            $product,
+            $data['deleted_image_ids']
+        );
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| Upload New Images
+|--------------------------------------------------------------------------
+*/
+
+if (
+    request()->hasFile('images')
+) {
+
+    $this->imageService
+        ->uploadImages(
+
+            $product,
+
+            request()->file('images'),
+
+            $data['image_alt_texts']
+                ?? []
+
+        );
+
+}
+
+/*
+|--------------------------------------------------------------------------
+| Primary Image
+|--------------------------------------------------------------------------
+*/
+
+if (!empty($data['primary_image_id'])) {
+
+    $this->imageService
+        ->setPrimaryImage(
+
+            $product,
+
+            $data['primary_image_id']
+
+        );
+
+}
+
+            /*
             |--------------------------------------------------------------------------
             | Return Fresh Model
             |--------------------------------------------------------------------------
@@ -189,19 +252,27 @@ class ProductService
 
             return $product->fresh([
 
-                'supplier',
+    'supplier',
 
-                'brand',
+    'brand',
 
-                'unit',
+    'unit',
 
-                'categories',
+    'categories',
 
-                'assignedAttributes.attribute',
+    'images',
 
-                'assignedAttributes.value',
+    'variants',
 
-            ]);
+    'variants.attributeValues.attribute',
+
+    'variants.attributeValues.value',
+
+    'assignedAttributes.attribute',
+
+    'assignedAttributes.value',
+
+]);
         });
     }
 

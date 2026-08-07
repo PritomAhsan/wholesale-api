@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Services\Product;
-
+use App\Services\Product\ProductImageService;
 use App\Models\Product;
 use App\Models\ProductImage;
 use Illuminate\Http\UploadedFile;
@@ -33,7 +33,10 @@ class ProductImageService
 
                     'is_primary' => $product->images()->count() === 0 && $index === 0,
 
-                    'sort_order' => $product->images()->max('sort_order') + $index + 1,
+                    'sort_order' =>
+($product->images()->max('sort_order') ?? 0)
++ $index
++ 1,
 
                 ]);
 
@@ -44,6 +47,20 @@ class ProductImageService
 
         });
     }
+
+    /**
+ * Backward compatible upload wrapper.
+ */
+public function uploadImages(
+    Product $product,
+    array $images,
+    array $altTexts = []
+) {
+    return $this->upload($product, [
+        'images' => $images,
+        'alt_text' => $altTexts,
+    ]);
+}
 
     /**
      * Update image information.
@@ -107,6 +124,29 @@ class ProductImageService
     }
 
     /**
+ * Delete multiple images.
+ */
+public function deleteImages(
+    Product $product,
+    array $imageIds
+): void {
+
+    $images = ProductImage::where(
+        'product_id',
+        $product->id
+    )
+    ->whereIn('id', $imageIds)
+    ->get();
+
+    foreach ($images as $image) {
+
+        $this->delete($image);
+
+    }
+
+}
+
+    /**
      * Reorder gallery.
      */
     public function reorder(Product $product, array $images): void
@@ -117,7 +157,7 @@ class ProductImageService
 
                 ProductImage::where('product_id', $product->id)
 
-                    ->where('uuid', $item['uuid'])
+                    ->where('id', $item['id'])
 
                     ->update([
 
@@ -157,6 +197,25 @@ class ProductImageService
 
         });
     }
+
+
+    /**
+ * Set primary image by id.
+ */
+public function setPrimaryImage(
+    Product $product,
+    int $imageId
+): void {
+
+    $image = ProductImage::where(
+        'product_id',
+        $product->id
+    )
+    ->findOrFail($imageId);
+
+    $this->setPrimary($image);
+
+}
 
     /**
      * Store uploaded image.

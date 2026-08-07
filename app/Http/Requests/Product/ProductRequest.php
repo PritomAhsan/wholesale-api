@@ -242,6 +242,80 @@ class ProductRequest extends FormRequest
                 'required',
                 'exists:attribute_values,id',
             ],
+
+            /*
+|--------------------------------------------------------------------------
+| Existing Images
+|--------------------------------------------------------------------------
+*/
+
+'deleted_image_ids' => [
+
+    'nullable',
+
+    'array',
+
+],
+
+'deleted_image_ids.*' => [
+
+    'integer',
+
+    'exists:product_images,id',
+
+],
+
+'primary_image_id' => [
+
+    'nullable',
+
+    'integer',
+
+    'exists:product_images,id',
+
+],
+
+/*
+|--------------------------------------------------------------------------
+| New Images
+|--------------------------------------------------------------------------
+*/
+
+'images' => [
+
+    'nullable',
+
+    'array',
+
+],
+
+'images.*' => [
+
+    'image',
+
+    'mimes:jpg,jpeg,png,webp',
+
+    'max:5120',
+
+],
+
+'image_alt_texts' => [
+
+    'nullable',
+
+    'array',
+
+],
+
+'image_alt_texts.*' => [
+
+    'nullable',
+
+    'string',
+
+    'max:255',
+
+],
         ];
     }
 
