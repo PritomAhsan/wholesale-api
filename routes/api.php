@@ -23,7 +23,32 @@ use App\Http\Controllers\Api\V1\Admin\InventoryReportController;
 use App\Http\Controllers\Api\V1\Admin\ProductApprovalController;
 use App\Http\Controllers\Api\V1\Admin\ProductStatusController;
 use App\Http\Controllers\Api\V1\Admin\ProductQueryController;
+use App\Http\Controllers\Api\Admin\Lookup\LookupController;
 
+Route::prefix('lookups')
+    ->group(function () {
+
+        Route::get(
+            'categories',
+            [LookupController::class, 'categories']
+        );
+
+        Route::get(
+            'brands',
+            [LookupController::class, 'brands']
+        );
+
+        Route::get(
+            'units',
+            [LookupController::class, 'units']
+        );
+
+        Route::get(
+            'suppliers',
+            [LookupController::class, 'suppliers']
+        );
+
+    });
 
 Route::prefix('v1')->group(function () {
 
