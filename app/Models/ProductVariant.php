@@ -13,6 +13,8 @@ class ProductVariant extends Model
 
     protected $fillable = [
 
+        'uuid',
+
         'product_id',
 
         'sku',
@@ -110,7 +112,10 @@ class ProductVariant extends Model
 
         }
 
-        if ($this->stock_quantity <= $this->low_stock_quantity) {
+        if (
+            $this->stock_quantity <=
+            $this->low_stock_quantity
+        ) {
 
             return VariantAvailability::LOW_STOCK->value;
 
@@ -123,13 +128,17 @@ class ProductVariant extends Model
     {
         return max(
             0,
-            (float) $this->selling_price - (float) $this->cost_price
+            (float) $this->selling_price
+            -
+            (float) $this->cost_price
         );
     }
 
     public function getMarginPercentageAttribute(): float
     {
-        if ((float) $this->cost_price <= 0) {
+        if (
+            (float) $this->cost_price <= 0
+        ) {
 
             return 0;
 
@@ -138,6 +147,7 @@ class ProductVariant extends Model
         return round(
 
             (
+
                 (
                     (float) $this->selling_price
                     -
@@ -157,19 +167,25 @@ class ProductVariant extends Model
 
     public function images()
     {
-        return $this->hasMany(ProductVariantImage::class)
-            ->orderBy('sort_order');
+        return $this->hasMany(
+            ProductVariantImage::class
+        )->orderBy('sort_order');
     }
 
     public function primaryImage()
     {
-        return $this->hasOne(ProductVariantImage::class)
-            ->where('is_primary', true);
+        return $this->hasOne(
+            ProductVariantImage::class
+        )->where(
+            'is_primary',
+            true
+        );
     }
 
     public function inventoryTransactions()
     {
-        return $this->hasMany(InventoryTransaction::class)
-            ->latest();
+        return $this->hasMany(
+            InventoryTransaction::class
+        )->latest();
     }
 }

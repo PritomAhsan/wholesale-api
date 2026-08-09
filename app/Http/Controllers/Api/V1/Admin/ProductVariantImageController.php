@@ -3,12 +3,9 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Api\V1\ApiController;
-use App\Http\Requests\ProductImage\ReorderProductImagesRequest;
-use App\Http\Requests\ProductImage\UpdateProductImageRequest;
 use App\Http\Requests\ProductVariantImage\UploadProductVariantImagesRequest;
 use App\Http\Resources\ProductVariantImage\ProductVariantImageResource;
 use App\Models\Product;
-use App\Models\ProductImage;
 use App\Models\ProductVariant;
 use App\Models\ProductVariantImage;
 use App\Services\Product\ProductVariantImageService;
@@ -23,148 +20,139 @@ class ProductVariantImageController extends ApiController
     }
 
     /**
-     * Ensure image belongs to product.
+     * Ensure variant belongs to product.
      */
-    protected function ensureOwnership(
-        ProductVariant $product,
-        ProductVariantImage $image
+    protected function ensureVariantOwnership(
+        Product $product,
+        ProductVariant $variant
     ): void {
-
         abort_unless(
-
-            $image->product_id === $product->id,
-
+            $variant->product_id === $product->id,
             404,
-
-            'Image not found.'
-
+            'Variant not found.'
         );
-
     }
 
     /**
-     * Upload images.
+     * Ensure image belongs to variant.
+     */
+    protected function ensureImageOwnership(
+        ProductVariant $variant,
+        ProductVariantImage $image
+    ): void {
+        abort_unless(
+            $image->product_variant_id === $variant->id,
+            404,
+            'Image not found.'
+        );
+    }
+
+    /**
+     * Upload variant images.
      */
     public function upload(
         UploadProductVariantImagesRequest $request,
-        ProductVariant $product
+        Product $product,
+        ProductVariant $variant
     ): JsonResponse {
-
         try {
-
-            $images = $this->service->upload(
-
+            $this->ensureVariantOwnership(
                 $product,
-
-                $request->validated()
-
+                $variant
             );
 
-            return $this->success([
+            $images = $this->service->upload(
+                $variant,
+                $request->validated()
+            );
 
-                'images' => ProductVariantImageResource::collection($images)
-
-            ], 'Images uploaded successfully.', 201);
-
+            return $this->success(
+                [
+                    'images' =>
+                        ProductVariantImageResource::collection(
+                            $images
+                        ),
+                ],
+                'Images uploaded successfully.',
+                201
+            );
         } catch (Throwable $exception) {
-
             report($exception);
 
             return $this->error(
-
                 $exception->getMessage(),
-
                 500
-
             );
-
         }
-
     }
 
     /**
-     * Update image.
-     */
-
-
-    /**
-     * Delete image.
+     * Delete variant image.
      */
     public function destroy(
-        ProductVariant $product,
+        Product $product,
+        ProductVariant $variant,
         ProductVariantImage $image
     ): JsonResponse {
-
         try {
+            $this->ensureVariantOwnership(
+                $product,
+                $variant
+            );
 
-            $this->ensureOwnership($product, $image);
+            $this->ensureImageOwnership(
+                $variant,
+                $image
+            );
 
             $this->service->delete($image);
 
             return $this->success(
-
                 [],
-
                 'Image deleted successfully.'
-
             );
-
         } catch (Throwable $exception) {
-
             report($exception);
 
             return $this->error(
-
                 $exception->getMessage(),
-
                 500
-
             );
-
         }
-
     }
 
     /**
-     * Set primary image.
+     * Set variant image as primary.
      */
     public function setPrimary(
-        ProductVariant $product,
+        Product $product,
+        ProductVariant $variant,
         ProductVariantImage $image
     ): JsonResponse {
-
         try {
+            $this->ensureVariantOwnership(
+                $product,
+                $variant
+            );
 
-            $this->ensureOwnership($product, $image);
+            $this->ensureImageOwnership(
+                $variant,
+                $image
+            );
 
             $this->service->setPrimary($image);
 
             return $this->success(
-
                 [],
-
                 'Primary image updated successfully.'
-
             );
-
         } catch (Throwable $exception) {
-
             report($exception);
 
             return $this->error(
-
                 $exception->getMessage(),
-
                 500
-
             );
-
         }
-
     }
-
-    /**
-     * Reorder gallery.
-     */
-
 }

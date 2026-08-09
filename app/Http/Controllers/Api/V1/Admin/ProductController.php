@@ -524,6 +524,7 @@ class ProductController extends ApiController
                         'images',
     'variants.attributeValues.attribute',
     'variants.attributeValues.value',
+    'variants.images',
 
                     ])
 
@@ -585,6 +586,7 @@ class ProductController extends ApiController
                 'images',
     'variants.attributeValues.attribute',
     'variants.attributeValues.value',
+    'variants.images',
 
             ]);
 
@@ -665,6 +667,7 @@ class ProductController extends ApiController
                         'images',
     'variants.attributeValues.attribute',
     'variants.attributeValues.value',
+    'variants.images',
 
                     ])
 
@@ -781,6 +784,7 @@ class ProductController extends ApiController
                         'images',
     'variants.attributeValues.attribute',
     'variants.attributeValues.value',
+    'variants.images',
 
                     ])
 
@@ -891,6 +895,7 @@ class ProductController extends ApiController
                         'images',
     'variants.attributeValues.attribute',
     'variants.attributeValues.value',
+    'variants.images',
                     ])
                 ),
 

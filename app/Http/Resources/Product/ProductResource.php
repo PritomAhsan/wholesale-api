@@ -107,29 +107,39 @@ class ProductResource extends JsonResource
             ),
 
             'attributes' => $this->whenLoaded(
-    'assignedAttributes',
-    function () {
-        return $this->assignedAttributes->map(
-            function ($assignedAttribute) {
-                return [
-                    'attribute' => $assignedAttribute->attribute
-                        ? [
-                            'id' => $assignedAttribute->attribute->id,
-                            'name' => $assignedAttribute->attribute->name,
-                        ]
-                        : null,
+                'assignedAttributes',
+                function () {
 
-                    'value' => $assignedAttribute->value
-                        ? [
-                            'id' => $assignedAttribute->value->id,
-                            'value' => $assignedAttribute->value->value,
-                        ]
-                        : null,
-                ];
-            }
-        );
-    }
-),
+                    return $this->assignedAttributes->map(
+
+                        function ($item) {
+
+                            return [
+
+                                'attribute' => [
+
+                                    'id' => $item->attribute->id,
+
+                                    'name' => $item->attribute->name,
+
+                                ],
+
+                                'value' => [
+
+                                    'id' => $item->value->id,
+
+                                    'value' => $item->value->value,
+
+                                ],
+
+                            ];
+
+                        }
+
+                    );
+
+                }
+            ),
 
             /*
             |--------------------------------------------------------------------------
@@ -293,6 +303,40 @@ class ProductResource extends JsonResource
                                 'sort_order' => $variant->sort_order,
 
                                 'availability' => $variant->availability,
+
+                                'attributes' => $variant->relationLoaded('attributeValues')
+                                    ? $variant->attributeValues->map(
+                                        function ($assignment) {
+                                            return [
+
+                                                'attribute_id' => $assignment->attribute_id,
+
+                                                'attribute_value_id' => $assignment->attribute_value_id,
+
+                                                'attribute_name' => $assignment->attribute?->name,
+
+                                                'value' => $assignment->value?->value,
+
+                                            ];
+                                        }
+                                    )
+                                    : [],
+
+                                'images' => $variant->relationLoaded('images')
+                                    ? $variant->images->map(
+                                        function ($image) {
+                                            return [
+
+                                                'id' => $image->id,
+
+                                                'image' => $image->image_url,
+
+                                                'is_primary' => (bool) $image->is_primary,
+
+                                            ];
+                                        }
+                                    )
+                                    : [],
 
                             ];
                         }

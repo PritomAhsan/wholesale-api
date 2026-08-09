@@ -351,49 +351,50 @@ Route::prefix('v1')->group(function () {
     ->group(function () {
 
         Route::prefix('products/{product}')
-            ->group(function () {
+    ->withoutScopedBindings()
+    ->group(function () {
 
-            Route::get(
-                'variants',
-                [ProductVariantController::class, 'index']
-            );
+        Route::get(
+            'variants',
+            [ProductVariantController::class, 'index']
+        );
 
-            Route::post(
-                'variants',
-                [ProductVariantController::class, 'store']
-            );
+        Route::post(
+            'variants',
+            [ProductVariantController::class, 'store']
+        );
 
-            Route::get(
-                'variants/{variant}',
-                [ProductVariantController::class, 'show']
-            );
+        Route::get(
+            'variants/{variant}',
+            [ProductVariantController::class, 'show']
+        );
 
-            Route::put(
-                'variants/{variant}',
-                [ProductVariantController::class, 'update']
-            );
+        Route::put(
+            'variants/{variant}',
+            [ProductVariantController::class, 'update']
+        );
 
-            Route::patch(
-                'variants/{variant}',
-                [ProductVariantController::class, 'update']
-            );
+        Route::patch(
+            'variants/{variant}',
+            [ProductVariantController::class, 'update']
+        );
 
-            Route::delete(
-                'variants/{variant}',
-                [ProductVariantController::class, 'destroy']
-            );
+        Route::delete(
+            'variants/{variant}',
+            [ProductVariantController::class, 'destroy']
+        );
 
-            Route::patch(
-                'variants/{uuid}/restore',
-                [ProductVariantController::class, 'restore']
-            );
+        Route::patch(
+            'variants/{uuid}/restore',
+            [ProductVariantController::class, 'restore']
+        );
 
-            Route::delete(
-                'variants/{uuid}/force-delete',
-                [ProductVariantController::class, 'forceDelete']
-            );
+        Route::delete(
+            'variants/{uuid}/force-delete',
+            [ProductVariantController::class, 'forceDelete']
+        );
 
-        });
+    });
 
         Route::prefix('products/{product}')->group(function () {
 
@@ -429,24 +430,28 @@ Route::prefix('v1')->group(function () {
 
         });
 
-        Route::prefix('products/{product}/variants/{variant}')->group(function () {
+        Route::prefix(
+    'products/{product}/variants/{variant}'
+)
+    ->withoutScopedBindings()
+    ->group(function () {
 
-            Route::post(
-                'images',
-                [ProductVariantImageController::class, 'upload']
-            );
+        Route::post(
+            'images',
+            [ProductVariantImageController::class, 'upload']
+        );
 
-            Route::delete(
-                'images/{image}',
-                [ProductVariantImageController::class, 'destroy']
-            );
+        Route::delete(
+            'images/{image}',
+            [ProductVariantImageController::class, 'destroy']
+        );
 
-            Route::patch(
-                'images/{image}/primary',
-                [ProductVariantImageController::class, 'setPrimary']
-            );
+        Route::patch(
+            'images/{image}/primary',
+            [ProductVariantImageController::class, 'setPrimary']
+        );
 
-        });
+    });
 
         Route::prefix('variants/{variant}/inventory')->group(function () {
 
