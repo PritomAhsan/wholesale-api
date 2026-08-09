@@ -107,39 +107,29 @@ class ProductResource extends JsonResource
             ),
 
             'attributes' => $this->whenLoaded(
-                'assignedAttributes',
-                function () {
+    'assignedAttributes',
+    function () {
+        return $this->assignedAttributes->map(
+            function ($assignedAttribute) {
+                return [
+                    'attribute' => $assignedAttribute->attribute
+                        ? [
+                            'id' => $assignedAttribute->attribute->id,
+                            'name' => $assignedAttribute->attribute->name,
+                        ]
+                        : null,
 
-                    return $this->assignedAttributes->map(
-
-                        function ($item) {
-
-                            return [
-
-                                'attribute' => [
-
-                                    'id' => $item->attribute->id,
-
-                                    'name' => $item->attribute->name,
-
-                                ],
-
-                                'value' => [
-
-                                    'id' => $item->value->id,
-
-                                    'value' => $item->value->value,
-
-                                ],
-
-                            ];
-
-                        }
-
-                    );
-
-                }
-            ),
+                    'value' => $assignedAttribute->value
+                        ? [
+                            'id' => $assignedAttribute->value->id,
+                            'value' => $assignedAttribute->value->value,
+                        ]
+                        : null,
+                ];
+            }
+        );
+    }
+),
 
             /*
             |--------------------------------------------------------------------------
