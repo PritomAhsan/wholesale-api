@@ -94,8 +94,12 @@ Route::prefix('v1')->group(function () {
         // Public
         Route::post('/register', [AuthController::class, 'register']);
         Route::post('/login', [AuthController::class, 'login']);
-        Route::post('/forgot-password', []);
-        Route::post('/reset-password', []);
+
+        // TODO: not implemented yet — needs AuthService::forgotPassword/resetPassword,
+        // mail config, and reset-token handling. Left out so a client hitting these
+        // gets a clean 404 instead of a 500 from an empty route action.
+        // Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+        // Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
         // Protected
         Route::middleware('auth:sanctum')->group(function () {
@@ -152,8 +156,8 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::middleware([
-        // 'auth:sanctum',
-        // 'role:Super Admin|Admin'
+        'auth:sanctum',
+        'role:Super Admin|Admin'
     ])->prefix('admin')->group(function () {
 
         Route::apiResource('categories', CategoryController::class);
@@ -161,8 +165,8 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::middleware([
-        // 'auth:sanctum',
-        // 'role:Super Admin|Admin'
+        'auth:sanctum',
+        'role:Super Admin|Admin'
     ])
     ->group(function () {
 
@@ -292,7 +296,7 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::prefix('admin')
-    // ->middleware(['auth:sanctum', 'role:Super Admin|Admin'])
+    ->middleware(['auth:sanctum', 'role:Super Admin|Admin|Supplier'])
     ->group(function () {
 
         Route::apiResource('products', ProductController::class);
@@ -340,8 +344,8 @@ Route::prefix('v1')->group(function () {
     });
 
     Route::middleware([
-        // 'auth:sanctum',
-        // 'role:Super Admin|Admin|Supplier',
+        'auth:sanctum',
+        'role:Super Admin|Admin|Supplier',
     ])
     ->prefix('admin')
     ->group(function () {

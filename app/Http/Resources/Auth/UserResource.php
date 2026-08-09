@@ -38,6 +38,14 @@ class UserResource extends JsonResource
 
             'created_at' => $this->created_at,
 
+            'roles' => $this->whenLoaded(
+                'roles',
+                fn () => $this->roles->pluck('name'),
+                fn () => $this->getRoleNames()
+            ),
+
+            'permissions' => $this->getAllPermissions()->pluck('name'),
+
         ];
     }
 }
