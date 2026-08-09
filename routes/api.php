@@ -48,6 +48,16 @@ Route::prefix('lookups')
             [LookupController::class, 'suppliers']
         );
 
+        Route::get(
+            'attributes',
+            [LookupController::class, 'attributes']
+        );
+
+        Route::get(
+            'attribute-values',
+            [LookupController::class, 'attributeValues']
+        );
+
     });
 
 Route::prefix('v1')->group(function () {

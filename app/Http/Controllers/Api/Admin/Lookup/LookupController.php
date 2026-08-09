@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Api\Admin\Lookup;
 
 use App\Http\Controllers\Controller;
+use App\Models\Attribute;
+use App\Models\AttributeValue;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Supplier;
 use App\Models\Unit;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Http\JsonResponse;
 
 class LookupController extends Controller
 {
@@ -83,6 +85,38 @@ class LookupController extends Controller
                 'company_name',
             ]
 
+        );
+    }
+
+    /**
+     * Attribute lookup.
+     */
+    public function attributes(): JsonResponse
+    {
+        return $this->lookup(
+            Attribute::query(),
+
+                [
+                    'id',
+                    'name',
+                ],
+            // 'Attributes fetched successfully.'
+        );
+    }
+
+    /**
+     * Attribute value lookup.
+     */
+    public function attributeValues(): JsonResponse
+    {
+        return $this->lookup(
+            AttributeValue::query(),
+            [
+                'id',
+                'uuid',
+                'attribute_id',
+                'value',
+            ]
         );
     }
 

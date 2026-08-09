@@ -16,6 +16,7 @@ class ProductResource extends JsonResource
             | Identity
             |--------------------------------------------------------------------------
             */
+            'id' => $this->id,
 
             'uuid' => $this->uuid,
 
