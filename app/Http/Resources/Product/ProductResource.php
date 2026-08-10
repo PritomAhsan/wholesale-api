@@ -328,11 +328,14 @@ class ProductResource extends JsonResource
                                             return [
 
                                                 'id' => $image->id,
+                                                'uuid' => $image->uuid,
 
                                                 'image' => $image->image_url,
+                                                'image_url' => $image->image_url,
 
                                                 'is_primary' => (bool) $image->is_primary,
 
+                                                'sort_order' => $image->sort_order,
                                             ];
                                         }
                                     )

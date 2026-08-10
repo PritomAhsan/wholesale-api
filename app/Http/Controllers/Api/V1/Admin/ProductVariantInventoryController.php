@@ -20,15 +20,33 @@ class ProductVariantInventoryController extends ApiController
     ) {
     }
 
-    public function show(ProductVariant $variant): JsonResponse
+    /**
+     * Resolve the variant explicitly by id — this route is NOT under
+     * a {product} prefix, and the route parameter is named
+     * {variant_id} (not {variant}) specifically to avoid a global
+     * Route::bind('variant', ...) in AppServiceProvider that looks up
+     * ProductVariant by uuid for any parameter literally named
+     * "variant", which would 404 given the numeric id this route
+     * actually receives.
+     */
+    protected function resolveVariant(int|string $variant_id): ProductVariant
     {
+        return ProductVariant::findOrFail($variant_id);
+    }
+
+    public function show(int|string $variant_id): JsonResponse
+    {
+        $variant = $this->resolveVariant($variant_id);
+
         return $this->success([
             'inventory' => new ProductVariantInventoryResource($variant),
         ]);
     }
 
-    public function increase(IncreaseInventoryRequest $request, ProductVariant $variant): JsonResponse
+    public function increase(IncreaseInventoryRequest $request, int|string $variant_id): JsonResponse
     {
+        $variant = $this->resolveVariant($variant_id);
+
         $variant = $this->inventoryService->increase(
             $variant,
             $request->integer('quantity'),
@@ -42,8 +60,10 @@ class ProductVariantInventoryController extends ApiController
         ], 'Inventory increased successfully.');
     }
 
-    public function decrease(DecreaseInventoryRequest $request, ProductVariant $variant): JsonResponse
+    public function decrease(DecreaseInventoryRequest $request, int|string $variant_id): JsonResponse
     {
+        $variant = $this->resolveVariant($variant_id);
+
         $variant = $this->inventoryService->decrease(
             $variant,
             $request->integer('quantity'),
@@ -57,8 +77,10 @@ class ProductVariantInventoryController extends ApiController
         ], 'Inventory decreased successfully.');
     }
 
-    public function adjust(AdjustInventoryRequest $request, ProductVariant $variant): JsonResponse
+    public function adjust(AdjustInventoryRequest $request, int|string $variant_id): JsonResponse
     {
+        $variant = $this->resolveVariant($variant_id);
+
         $variant = $this->inventoryService->adjust(
             $variant,
             $request->integer('stock_quantity'),
@@ -70,8 +92,10 @@ class ProductVariantInventoryController extends ApiController
         ], 'Inventory adjusted successfully.');
     }
 
-    public function history(ProductVariant $variant): JsonResponse
+    public function history(int|string $variant_id): JsonResponse
     {
+        $variant = $this->resolveVariant($variant_id);
+
         return $this->success([
             'transactions' => InventoryTransactionResource::collection(
                 $variant->inventoryTransactions()->paginate(20)

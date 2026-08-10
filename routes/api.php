@@ -351,7 +351,6 @@ Route::prefix('v1')->group(function () {
     ->group(function () {
 
         Route::prefix('products/{product}')
-    ->withoutScopedBindings()
     ->group(function () {
 
         Route::get(
@@ -365,22 +364,22 @@ Route::prefix('v1')->group(function () {
         );
 
         Route::get(
-            'variants/{variant}',
+            'variants/{variant_id}',
             [ProductVariantController::class, 'show']
         );
 
         Route::put(
-            'variants/{variant}',
+            'variants/{variant_id}',
             [ProductVariantController::class, 'update']
         );
 
         Route::patch(
-            'variants/{variant}',
+            'variants/{variant_id}',
             [ProductVariantController::class, 'update']
         );
 
         Route::delete(
-            'variants/{variant}',
+            'variants/{variant_id}',
             [ProductVariantController::class, 'destroy']
         );
 
@@ -431,9 +430,8 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::prefix(
-    'products/{product}/variants/{variant}'
+    'products/{product}/variants/{variant_id}'
 )
-    ->withoutScopedBindings()
     ->group(function () {
 
         Route::post(
@@ -453,7 +451,7 @@ Route::prefix('v1')->group(function () {
 
     });
 
-        Route::prefix('variants/{variant}/inventory')->group(function () {
+        Route::prefix('variants/{variant_id}/inventory')->group(function () {
 
             Route::get(
                 '/',

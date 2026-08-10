@@ -19,32 +19,41 @@ class ProductVariantImageController extends ApiController
     ) {
     }
 
-    /**
-     * Ensure variant belongs to product.
-     */
-    protected function ensureVariantOwnership(
+    /*
+    |--------------------------------------------------------------------------
+    | Resolution helpers
+    |--------------------------------------------------------------------------
+    |
+    | The route parameter must NOT be named {variant} — AppServiceProvider
+    | registers a global Route::bind('variant', ...) that looks up
+    | ProductVariant by uuid for ANY route parameter literally named
+    | "variant", regardless of this controller's type-hints. Since these
+    | routes deal with the numeric variant id, that global bind always
+    | 404'd. Routes use {variant_id} instead to avoid it entirely, and
+    | resolution happens explicitly here, scoped to the parent product.
+    |
+    */
+
+    protected function resolveVariant(
         Product $product,
-        ProductVariant $variant
-    ): void {
-        abort_unless(
-            $variant->product_id === $product->id,
-            404,
-            'Variant not found.'
-        );
+        int|string $variant_id
+    ): ProductVariant {
+
+        return ProductVariant::where('product_id', $product->id)
+            ->where('id', $variant_id)
+            ->firstOrFail();
+
     }
 
-    /**
-     * Ensure image belongs to variant.
-     */
-    protected function ensureImageOwnership(
+    protected function resolveImage(
         ProductVariant $variant,
-        ProductVariantImage $image
-    ): void {
-        abort_unless(
-            $image->product_variant_id === $variant->id,
-            404,
-            'Image not found.'
-        );
+        string $image
+    ): ProductVariantImage {
+
+        return ProductVariantImage::where('product_variant_id', $variant->id)
+            ->where('uuid', $image)
+            ->firstOrFail();
+
     }
 
     /**
@@ -53,16 +62,16 @@ class ProductVariantImageController extends ApiController
     public function upload(
         UploadProductVariantImagesRequest $request,
         Product $product,
-        ProductVariant $variant
+        int|string $variant_id
     ): JsonResponse {
         try {
-            $this->ensureVariantOwnership(
+            $variantModel = $this->resolveVariant(
                 $product,
-                $variant
+                $variant_id
             );
 
             $images = $this->service->upload(
-                $variant,
+                $variantModel,
                 $request->validated()
             );
 
@@ -91,21 +100,21 @@ class ProductVariantImageController extends ApiController
      */
     public function destroy(
         Product $product,
-        ProductVariant $variant,
-        ProductVariantImage $image
+        int|string $variant_id,
+        string $image
     ): JsonResponse {
         try {
-            $this->ensureVariantOwnership(
+            $variantModel = $this->resolveVariant(
                 $product,
-                $variant
+                $variant_id
             );
 
-            $this->ensureImageOwnership(
-                $variant,
+            $imageModel = $this->resolveImage(
+                $variantModel,
                 $image
             );
 
-            $this->service->delete($image);
+            $this->service->delete($imageModel);
 
             return $this->success(
                 [],
@@ -126,21 +135,21 @@ class ProductVariantImageController extends ApiController
      */
     public function setPrimary(
         Product $product,
-        ProductVariant $variant,
-        ProductVariantImage $image
+        int|string $variant_id,
+        string $image
     ): JsonResponse {
         try {
-            $this->ensureVariantOwnership(
+            $variantModel = $this->resolveVariant(
                 $product,
-                $variant
+                $variant_id
             );
 
-            $this->ensureImageOwnership(
-                $variant,
+            $imageModel = $this->resolveImage(
+                $variantModel,
                 $image
             );
 
-            $this->service->setPrimary($image);
+            $this->service->setPrimary($imageModel);
 
             return $this->success(
                 [],

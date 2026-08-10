@@ -3,6 +3,7 @@
 namespace App\Http\Requests\ProductVariant;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ProductVariantRequest extends FormRequest
 {
@@ -24,15 +25,11 @@ class ProductVariantRequest extends FormRequest
             ],
 
             'sku' => [
-
                 'required',
-
                 'string',
-
                 'max:100',
-
-                'unique:product_variants,sku,' . $this->route('productVariant'),
-
+                Rule::unique('product_variants', 'sku')
+                    ->ignore($this->route('variant_id')),
             ],
 
             'barcode' => [

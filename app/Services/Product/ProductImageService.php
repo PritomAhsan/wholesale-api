@@ -157,7 +157,7 @@ public function deleteImages(
 
                 ProductImage::where('product_id', $product->id)
 
-                    ->where('id', $item['id'])
+                    ->where('uuid', $item['uuid'])
 
                     ->update([
 

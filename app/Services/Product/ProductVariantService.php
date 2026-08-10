@@ -390,17 +390,10 @@ class ProductVariantService
                 'low_stock_quantity' =>
                     $data['low_stock_quantity'] ?? 5,
 
-                'weight' =>
-                    $data['weight'],
-
-                'length' =>
-                    $data['length'],
-
-                'width' =>
-                    $data['width'],
-
-                'height' =>
-                    $data['height'],
+                'weight' => $data['weight'] ?? null,
+                'length' => $data['length'] ?? null,
+                'width' => $data['width'] ?? null,
+                'height' => $data['height'] ?? null,
 
                 'is_active' =>
                     $data['is_active'] ?? true,

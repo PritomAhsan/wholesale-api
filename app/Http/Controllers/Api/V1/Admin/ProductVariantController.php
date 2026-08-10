@@ -46,6 +46,25 @@ class ProductVariantController extends ApiController
     }
 
     /**
+     * Resolve a variant scoped to its product explicitly, rather than
+     * relying on implicit route-model-binding — which was unreliable
+     * for this route shape (product/variant both bound from the
+     * group prefix) and could 404 on a variant that genuinely exists.
+     */
+    protected function resolveVariant(
+        Product $product,
+        int|string $variant_id
+    ): ProductVariant {
+
+        return ProductVariant::where('product_id', $product->id)
+
+            ->where('id', $variant_id)
+
+            ->firstOrFail();
+
+    }
+
+    /**
      * Base query for a product's variants.
      */
     protected function baseQuery(
@@ -144,14 +163,14 @@ class ProductVariantController extends ApiController
      */
     public function show(
         Product $product,
-        ProductVariant $variant
+        int|string $variant_id
     ): JsonResponse {
 
         try {
 
-            $this->ensureOwnership(
+            $variant = $this->resolveVariant(
                 $product,
-                $variant
+                $variant_id
             );
 
             $variant->load([
@@ -250,16 +269,16 @@ class ProductVariantController extends ApiController
     public function update(
         ProductVariantRequest $request,
         Product $product,
-        ProductVariant $variant
+        int|string $variant_id
     ): JsonResponse {
 
         try {
 
-            $this->ensureOwnership(
+            $variant = $this->resolveVariant(
 
                 $product,
 
-                $variant
+                $variant_id
 
             );
 
@@ -308,16 +327,16 @@ class ProductVariantController extends ApiController
      */
     public function destroy(
         Product $product,
-        ProductVariant $variant
+        int|string $variant_id
     ): JsonResponse {
 
         try {
 
-            $this->ensureOwnership(
+            $variant = $this->resolveVariant(
 
                 $product,
 
-                $variant
+                $variant_id
 
             );
 
