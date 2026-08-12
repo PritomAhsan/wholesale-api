@@ -49,9 +49,6 @@ class SupplierService
 
         ]);
 
-        // User becomes a supplier
-        $user->assignRole('Supplier');
-
         return $supplier;
     }
 
@@ -68,6 +65,11 @@ class SupplierService
             'approved_at' => now(),
             'approved_by' => $admin->id,
         ]);
+
+        // Access is granted here, at approval — not at application.
+        // Until an admin approves, the applicant should not be able
+        // to reach any Supplier-gated endpoint.
+        $supplier->user->assignRole('Supplier');
 
         return $supplier->fresh();
     }
