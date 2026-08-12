@@ -537,12 +537,12 @@ Route::prefix('v1')->group(function () {
             );
 
             Route::get(
-                'products/{product}/approval/timeline',
+                '{product}/approval/timeline',
                 [ProductApprovalController::class, 'timeline']
             );
 
             Route::get(
-                'products/approval/statistics',
+                'approval/statistics',
                 [ProductApprovalController::class, 'statistics']
             );
 
@@ -580,13 +580,17 @@ Route::prefix('v1')->group(function () {
                 [ProductStatusController::class, 'history']
             );
 
+        });
+
+        Route::prefix('products')->group(function () {
+
             Route::get(
-                'products',
+                'query',
                 [ProductQueryController::class, 'index']
             );
 
             Route::get(
-                'products/statistics',
+                'query/statistics',
                 [ProductQueryController::class, 'statistics']
             );
 

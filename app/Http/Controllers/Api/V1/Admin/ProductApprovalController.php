@@ -15,6 +15,7 @@ use App\Models\User;
 use App\Services\Product\ProductApprovalQueryService;
 use App\Services\Product\ProductApprovalService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class ProductApprovalController extends ApiController
 {
@@ -83,14 +84,26 @@ class ProductApprovalController extends ApiController
         ]);
     }
 
-    public function pending(): JsonResponse
+    public function pending(Request $request): JsonResponse
     {
+        $products = Product::where('status', ProductStatus::PENDING)
+
+            ->with(['supplier', 'images'])
+
+            ->latest()
+
+            ->paginate(
+                $request->integer('per_page', 20)
+            );
+
         return $this->success([
-            'products' => ProductResource::collection(
-                Product::where('status', ProductStatus::PENDING)
-                    ->latest()
-                    ->paginate(20)
-            ),
+            'products' => ProductResource::collection($products),
+            'pagination' => [
+                'current_page' => $products->currentPage(),
+                'last_page' => $products->lastPage(),
+                'per_page' => $products->perPage(),
+                'total' => $products->total(),
+            ],
         ]);
     }
 
