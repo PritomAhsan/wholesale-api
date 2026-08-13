@@ -32,17 +32,31 @@ class ProductResource extends JsonResource
             |--------------------------------------------------------------------------
             */
 
+            // Buyers only ever see an anonymized seller label — real
+            // company identity is reserved for admin requests so buyers
+            // can't bypass the platform to order directly from a seller.
             'supplier' => $this->whenLoaded('supplier', function () {
 
-                return [
+                $data = [
 
                     'id' => $this->supplier->id,
 
                     'uuid' => $this->supplier->uuid,
 
-                    'company_name' => $this->supplier->company_name,
+                    'display_name' => $this->supplier->display_name,
 
                 ];
+
+                // The public product route carries no auth middleware, so
+                // Sanctum never parses the bearer token unless the guard
+                // is resolved explicitly here.
+                if (auth('sanctum')->user()?->hasAnyRole(['Super Admin', 'Admin'])) {
+
+                    $data['company_name'] = $this->supplier->company_name;
+
+                }
+
+                return $data;
 
             }),
 

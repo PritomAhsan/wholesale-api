@@ -10,6 +10,14 @@ use App\Http\Controllers\Api\V1\Admin\BrandController;
 use App\Http\Controllers\Api\V1\Product\PublicBrandController;
 use App\Http\Controllers\Api\V1\Admin\UnitController;
 use App\Http\Controllers\Api\V1\Product\PublicUnitController;
+use App\Http\Controllers\Api\V1\Product\PublicProductController;
+use App\Http\Controllers\Api\V1\Rfq\RfqController;
+use App\Http\Controllers\Api\V1\Order\OrderController;
+use App\Http\Controllers\Api\V1\Admin\OrderController as AdminOrderController;
+use App\Http\Controllers\Api\V1\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Api\V1\Supplier\SupplierOrderController;
+use App\Http\Controllers\Api\V1\Supplier\SupplierDashboardController;
+use App\Http\Controllers\Api\V1\Admin\RfqController as AdminRfqController;
 use App\Http\Controllers\Api\V1\Admin\ProductAttributeController;
 use App\Http\Controllers\Api\V1\Product\PublicProductAttributeController;
 use App\Http\Controllers\Api\V1\Admin\ProductAttributeValueController;
@@ -89,6 +97,15 @@ Route::prefix('v1')->group(function () {
         [PublicProductAttributeValueController::class, 'index']
     );
 
+    Route::get('/products', [PublicProductController::class, 'index']);
+    Route::get('/products/{slug}', [PublicProductController::class, 'show']);
+
+    // No public supplier directory — sellers stay anonymous to buyers
+    // so buyers can't identify and route around the platform to order
+    // directly from a supplier.
+
+    Route::post('/rfqs', [RfqController::class, 'store']);
+
     Route::prefix('auth')->group(function () {
 
         // Public
@@ -119,6 +136,26 @@ Route::prefix('v1')->group(function () {
             [SupplierController::class,'register']
         );
 
+        Route::get(
+            '/supplier/me',
+            [SupplierController::class, 'me']
+        );
+
+        Route::post(
+            '/checkout',
+            [OrderController::class, 'store']
+        );
+
+        Route::get(
+            '/orders',
+            [OrderController::class, 'index']
+        );
+
+        Route::get(
+            '/orders/{uuid}',
+            [OrderController::class, 'show']
+        );
+
     });
 
     Route::middleware([
@@ -144,6 +181,11 @@ Route::prefix('v1')->group(function () {
     ])->group(function () {
 
         Route::get(
+            '/admin/suppliers',
+            [SupplierController::class, 'index']
+        );
+
+        Route::get(
             '/admin/suppliers/pending',
             [SupplierController::class, 'pending']
         );
@@ -161,6 +203,44 @@ Route::prefix('v1')->group(function () {
     ])->prefix('admin')->group(function () {
 
         Route::apiResource('categories', CategoryController::class);
+
+        Route::get('/orders', [AdminOrderController::class, 'index']);
+
+        Route::get('/orders/{uuid}', [AdminOrderController::class, 'show']);
+
+        Route::patch(
+            '/seller-orders/{uuid}/status',
+            [AdminOrderController::class, 'updateSellerOrderStatus']
+        );
+
+        Route::get('/dashboard', [AdminDashboardController::class, 'index']);
+
+        Route::get('/rfqs', [AdminRfqController::class, 'index']);
+
+        Route::get('/rfqs/{uuid}', [AdminRfqController::class, 'show']);
+
+        Route::patch(
+            '/rfqs/{uuid}/respond',
+            [AdminRfqController::class, 'respond']
+        );
+
+    });
+
+    Route::middleware([
+        'auth:sanctum',
+        'role:Supplier',
+    ])->prefix('supplier')->group(function () {
+
+        Route::get('/dashboard', [SupplierDashboardController::class, 'index']);
+
+        Route::get('/orders', [SupplierOrderController::class, 'index']);
+
+        Route::get('/orders/{uuid}', [SupplierOrderController::class, 'show']);
+
+        Route::patch(
+            '/orders/{uuid}/status',
+            [SupplierOrderController::class, 'updateStatus']
+        );
 
     });
 

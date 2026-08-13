@@ -22,6 +22,8 @@ class AuthService
 
             'password' => $data['password'],
 
+            'status' => 'active',
+
         ]);
 
         $user->assignRole('Customer');

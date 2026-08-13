@@ -87,8 +87,24 @@ class Supplier extends Model
         return $this->hasMany(Product::class);
     }
 
+    public function sellerOrders()
+    {
+        return $this->hasMany(SellerOrder::class);
+    }
+
     public function getRouteKeyName(): string
     {
         return 'uuid';
+    }
+
+    /**
+     * Buyer-facing, non-identifying label. Real company identity
+     * (name, contact, email, phone, website) must never reach public
+     * storefront responses — buyers should not be able to bypass the
+     * platform to order directly from a seller.
+     */
+    public function getDisplayNameAttribute(): string
+    {
+        return 'BULKARE Seller #' . strtoupper(substr($this->uuid, 0, 6));
     }
 }

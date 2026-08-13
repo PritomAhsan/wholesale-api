@@ -31,11 +31,13 @@ class ProductListResource extends JsonResource
 
             'formatted_price' => $this->formatted_price,
 
+            'min_order_quantity' => $this->min_order_quantity,
+
             'supplier' => [
 
                 'uuid' => $this->supplier?->uuid,
 
-                'company_name' => $this->supplier?->company_name,
+                'display_name' => $this->supplier?->display_name,
 
             ],
 
@@ -51,7 +53,9 @@ class ProductListResource extends JsonResource
                 ->pluck('name')
                 ->values(),
 
-            'stock' => $this->variants_sum_stock_quantity ?? 0,
+            'stock' => $this->variants_count > 0
+                ? ($this->variants_sum_stock_quantity ?? 0)
+                : $this->stock_quantity,
 
             'variants_count' => $this->variants_count,
 

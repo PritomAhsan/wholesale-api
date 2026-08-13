@@ -36,7 +36,11 @@ class CategoryResource extends JsonResource
 
             'children_count' => $this->children()->count(),
 
-            // 'products_count' => $this->products()->count(),
+            'products_count' => $this->whenCounted(
+                'products',
+                null,
+                0
+            ),
 
             'created_at' => $this->created_at,
 

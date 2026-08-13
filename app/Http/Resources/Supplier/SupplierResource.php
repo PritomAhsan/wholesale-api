@@ -27,7 +27,19 @@ class SupplierResource extends JsonResource
 
             'website' => $this->website,
 
+            'description' => $this->description,
+
+            'logo' => $this->logo
+                ? asset('storage/' . $this->logo)
+                : null,
+
+            'banner' => $this->banner
+                ? asset('storage/' . $this->banner)
+                : null,
+
             'status' => $this->status,
+
+            'products_count' => $this->whenCounted('products'),
 
             'created_at' => $this->created_at,
 

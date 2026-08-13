@@ -62,4 +62,51 @@ class SupplierController extends ApiController
             )
         ]);
     }
+
+    /**
+     * All suppliers, with optional status/search filters (admin).
+     */
+    public function index(Request $request)
+    {
+        $suppliers = Supplier::query()
+            ->withCount('products')
+            ->when(
+                $request->filled('status'),
+                fn ($query) => $query->where('status', $request->status)
+            )
+            ->when(
+                $request->filled('search'),
+                fn ($query) => $query->where(
+                    'company_name',
+                    'like',
+                    '%' . $request->search . '%'
+                )
+            )
+            ->latest()
+            ->paginate(
+                $request->integer('per_page', 20)
+            );
+
+        return $this->success([
+            'suppliers' => SupplierResource::collection($suppliers),
+            'pagination' => [
+                'current_page' => $suppliers->currentPage(),
+                'last_page' => $suppliers->lastPage(),
+                'per_page' => $suppliers->perPage(),
+                'total' => $suppliers->total(),
+            ],
+        ]);
+    }
+
+    /**
+     * The authenticated user's own supplier application, if any.
+     */
+    public function me(Request $request)
+    {
+        $supplier = $request->user()->supplier()->first();
+
+        return $this->success([
+            'supplier' => $supplier ? new SupplierResource($supplier) : null,
+        ]);
+    }
 }
