@@ -57,6 +57,8 @@ class SellerOrderResource extends JsonResource
 
             'delivered_at' => $this->delivered_at,
 
+            'cancelled_at' => $this->cancelled_at,
+
             // Whoever is fulfilling this seller order — admin or the
             // supplier themselves — needs the ship-to address. The
             // buyer already gets this from the parent OrderResource,

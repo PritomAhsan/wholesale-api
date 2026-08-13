@@ -17,6 +17,12 @@ class OrderResource extends JsonResource
 
             'status' => $this->status,
 
+            'cancellation_reason' => $this->cancellation_reason,
+
+            'cancelled_at' => $this->cancelled_at,
+
+            'can_cancel' => $this->isCancellable(),
+
             'subtotal' => $this->subtotal,
 
             'total' => $this->total,

@@ -169,4 +169,45 @@ class OrderService
 
         });
     }
+
+    /**
+     * Cancel an order and every seller order under it, releasing the
+     * stock that was reserved at checkout back to each product.
+     */
+    public function cancel(Order $order, ?User $actor, ?string $reason): Order
+    {
+        return DB::transaction(function () use ($order, $actor, $reason) {
+
+            $order->loadMissing('sellerOrders.items.product');
+
+            if (! $order->isCancellable()) {
+                throw ValidationException::withMessages([
+                    'order' => ['This order can no longer be cancelled.'],
+                ]);
+            }
+
+            foreach ($order->sellerOrders as $sellerOrder) {
+
+                foreach ($sellerOrder->items as $item) {
+                    $item->product?->increment('stock_quantity', $item->quantity);
+                }
+
+                $sellerOrder->update([
+                    'status' => 'cancelled',
+                    'cancelled_at' => now(),
+                ]);
+
+            }
+
+            $order->update([
+                'status' => 'cancelled',
+                'cancellation_reason' => $reason,
+                'cancelled_at' => now(),
+                'cancelled_by' => $actor?->id,
+            ]);
+
+            return $order->fresh(['sellerOrders.items', 'sellerOrders.supplier']);
+
+        });
+    }
 }

@@ -6,11 +6,17 @@ use App\Http\Controllers\Api\V1\ApiController;
 use App\Http\Resources\Order\OrderResource;
 use App\Models\Order;
 use App\Models\SellerOrder;
+use App\Services\OrderService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class OrderController extends ApiController
 {
+    public function __construct(
+        protected OrderService $orderService
+    ) {}
+
     /**
      * All orders on the platform, with optional status/search filters.
      */
@@ -102,5 +108,39 @@ class OrderController extends ApiController
         return $this->success([
             'order' => new OrderResource($order),
         ], 'Order status updated.');
+    }
+
+    /**
+     * Cancel an order on behalf of any buyer.
+     */
+    public function cancel(Request $request, string $uuid)
+    {
+        $order = Order::with('sellerOrders.items.product')
+            ->where('uuid', $uuid)
+            ->firstOrFail();
+
+        $data = $request->validate([
+            'reason' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        try {
+
+            $order = $this->orderService->cancel(
+                $order,
+                $request->user(),
+                $data['reason'] ?? null
+            );
+
+        } catch (ValidationException $e) {
+
+            return $this->error('Cannot cancel order', $e->errors(), 422);
+
+        }
+
+        return $this->success([
+            'order' => new OrderResource(
+                $order->load('user', 'sellerOrders.supplier', 'sellerOrders.items.product')
+            ),
+        ], 'Order cancelled.');
     }
 }

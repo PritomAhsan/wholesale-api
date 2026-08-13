@@ -111,12 +111,8 @@ Route::prefix('v1')->group(function () {
         // Public
         Route::post('/register', [AuthController::class, 'register']);
         Route::post('/login', [AuthController::class, 'login']);
-
-        // TODO: not implemented yet — needs AuthService::forgotPassword/resetPassword,
-        // mail config, and reset-token handling. Left out so a client hitting these
-        // gets a clean 404 instead of a 500 from an empty route action.
-        // Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
-        // Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+        Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
+        Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
         // Protected
         Route::middleware('auth:sanctum')->group(function () {
@@ -154,6 +150,11 @@ Route::prefix('v1')->group(function () {
         Route::get(
             '/orders/{uuid}',
             [OrderController::class, 'show']
+        );
+
+        Route::patch(
+            '/orders/{uuid}/cancel',
+            [OrderController::class, 'cancel']
         );
 
     });
@@ -211,6 +212,11 @@ Route::prefix('v1')->group(function () {
         Route::patch(
             '/seller-orders/{uuid}/status',
             [AdminOrderController::class, 'updateSellerOrderStatus']
+        );
+
+        Route::patch(
+            '/orders/{uuid}/cancel',
+            [AdminOrderController::class, 'cancel']
         );
 
         Route::get('/dashboard', [AdminDashboardController::class, 'index']);

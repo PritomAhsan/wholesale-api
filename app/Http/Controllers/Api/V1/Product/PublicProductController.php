@@ -23,11 +23,15 @@ class PublicProductController extends ApiController
             ->withSum('variants', 'stock_quantity')
             ->when(
                 $request->filled('search'),
-                fn ($query) => $query->where(
-                    'name',
-                    'like',
-                    '%' . $request->search . '%'
-                )
+                function ($query) use ($request) {
+                    $term = '%' . $request->search . '%';
+
+                    $query->where(function ($q) use ($term) {
+                        $q->where('name', 'like', $term)
+                            ->orWhere('sku', 'like', $term)
+                            ->orWhere('short_description', 'like', $term);
+                    });
+                }
             )
             ->when(
                 $request->filled('category'),

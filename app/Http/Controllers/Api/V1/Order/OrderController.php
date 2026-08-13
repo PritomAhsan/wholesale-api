@@ -82,4 +82,38 @@ class OrderController extends ApiController
             'order' => new OrderResource($order),
         ]);
     }
+
+    /**
+     * Cancel one of the authenticated buyer's own orders.
+     */
+    public function cancel(Request $request, string $uuid)
+    {
+        $order = $request->user()
+            ->orders()
+            ->with('sellerOrders.items.product')
+            ->where('uuid', $uuid)
+            ->firstOrFail();
+
+        $data = $request->validate([
+            'reason' => ['nullable', 'string', 'max:1000'],
+        ]);
+
+        try {
+
+            $order = $this->orderService->cancel(
+                $order,
+                $request->user(),
+                $data['reason'] ?? null
+            );
+
+        } catch (ValidationException $e) {
+
+            return $this->error('Cannot cancel order', $e->errors(), 422);
+
+        }
+
+        return $this->success([
+            'order' => new OrderResource($order->load('sellerOrders.supplier')),
+        ], 'Order cancelled.');
+    }
 }

@@ -26,6 +26,12 @@ class Order extends Model
 
         'status',
 
+        'cancellation_reason',
+
+        'cancelled_at',
+
+        'cancelled_by',
+
         'shipping_name',
 
         'shipping_phone',
@@ -51,6 +57,8 @@ class Order extends Model
         'total' => 'decimal:2',
 
         'placed_at' => 'datetime',
+
+        'cancelled_at' => 'datetime',
 
     ];
 
@@ -82,5 +90,27 @@ class Order extends Model
     public function sellerOrders()
     {
         return $this->hasMany(SellerOrder::class);
+    }
+
+    public function canceller()
+    {
+        return $this->belongsTo(User::class, 'cancelled_by');
+    }
+
+    /**
+     * An order can only be cancelled while none of its seller orders
+     * have shipped yet — once goods are in transit, cancellation has
+     * to go through a returns process instead.
+     */
+    public function isCancellable(): bool
+    {
+        if (in_array($this->status, ['cancelled', 'completed'], true)) {
+            return false;
+        }
+
+        return ! $this->sellerOrders
+            ->pluck('status')
+            ->intersect(['shipped', 'delivered'])
+            ->count();
     }
 }

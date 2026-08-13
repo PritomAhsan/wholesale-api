@@ -24,6 +24,8 @@ class SellerOrder extends Model
 
         'status',
 
+        'cancelled_at',
+
         'tracking_number',
 
         'shipping_carrier',
@@ -41,6 +43,8 @@ class SellerOrder extends Model
         'shipped_at' => 'datetime',
 
         'delivered_at' => 'datetime',
+
+        'cancelled_at' => 'datetime',
 
     ];
 
