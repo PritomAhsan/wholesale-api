@@ -22,6 +22,12 @@ class SellerOrder extends Model
 
         'subtotal',
 
+        'commission_amount',
+
+        'payable_amount',
+
+        'payout_id',
+
         'status',
 
         'cancelled_at',
@@ -39,6 +45,10 @@ class SellerOrder extends Model
     protected $casts = [
 
         'subtotal' => 'decimal:2',
+
+        'commission_amount' => 'decimal:2',
+
+        'payable_amount' => 'decimal:2',
 
         'shipped_at' => 'datetime',
 
@@ -77,5 +87,10 @@ class SellerOrder extends Model
     public function items()
     {
         return $this->hasMany(OrderItem::class);
+    }
+
+    public function payout()
+    {
+        return $this->belongsTo(Payout::class);
     }
 }

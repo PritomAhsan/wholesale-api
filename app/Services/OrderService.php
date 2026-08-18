@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Enums\ProductStatus;
 use App\Models\Order;
 use App\Models\OrderItem;
+use App\Models\Payment;
 use App\Models\Product;
 use App\Models\SellerOrder;
 use App\Models\User;
@@ -154,7 +155,15 @@ class OrderService
 
                 }
 
-                $sellerOrder->update(['subtotal' => $sellerSubtotal]);
+                $rate = $sellerOrder->supplier->effective_commission_rate;
+
+                $commissionAmount = round($sellerSubtotal * $rate / 100, 2);
+
+                $sellerOrder->update([
+                    'subtotal' => $sellerSubtotal,
+                    'commission_amount' => $commissionAmount,
+                    'payable_amount' => $sellerSubtotal - $commissionAmount,
+                ]);
 
                 $orderTotal += $sellerSubtotal;
 
@@ -163,6 +172,22 @@ class OrderService
             $order->update([
                 'subtotal' => $orderTotal,
                 'total' => $orderTotal,
+            ]);
+
+            // Scaffolding only — no payment gateway is wired up yet, so
+            // this records the amount actually owed without collecting
+            // it. Real charging happens once a Stripe integration
+            // exists to move this row from 'pending' to 'paid'.
+            Payment::create([
+
+                'order_id' => $order->id,
+
+                'amount' => $orderTotal,
+
+                'currency' => 'USD',
+
+                'status' => 'pending',
+
             ]);
 
             return $order->fresh(['sellerOrders.items', 'sellerOrders.supplier']);

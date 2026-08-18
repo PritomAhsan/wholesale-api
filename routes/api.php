@@ -25,6 +25,8 @@ use App\Http\Controllers\Api\V1\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\V1\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Api\V1\Supplier\SupplierOrderController;
 use App\Http\Controllers\Api\V1\Supplier\SupplierDashboardController;
+use App\Http\Controllers\Api\V1\Supplier\PayoutController as SupplierPayoutController;
+use App\Http\Controllers\Api\V1\Admin\PayoutController as AdminPayoutController;
 use App\Http\Controllers\Api\V1\Admin\RfqController as AdminRfqController;
 use App\Http\Controllers\Api\V1\Admin\ProductAttributeController;
 use App\Http\Controllers\Api\V1\Product\PublicProductAttributeController;
@@ -326,6 +328,10 @@ Route::prefix('v1')->group(function () {
 
         Route::get('/customers', [CustomerController::class, 'index']);
 
+        Route::get('/payouts', [AdminPayoutController::class, 'index']);
+        Route::get('/payouts/{payout}', [AdminPayoutController::class, 'show']);
+        Route::patch('/payouts/{payout}/mark-paid', [AdminPayoutController::class, 'markPaid']);
+
     });
 
     Route::middleware([
@@ -343,6 +349,10 @@ Route::prefix('v1')->group(function () {
             '/orders/{uuid}/status',
             [SupplierOrderController::class, 'updateStatus']
         );
+
+        Route::get('/payouts', [SupplierPayoutController::class, 'index']);
+
+        Route::post('/payouts', [SupplierPayoutController::class, 'store']);
 
     });
 

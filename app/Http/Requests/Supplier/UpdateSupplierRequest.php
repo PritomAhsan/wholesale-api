@@ -41,6 +41,8 @@ class UpdateSupplierRequest extends FormRequest
 
             'typical_lead_time' => ['nullable', 'string', 'max:255'],
 
+            'commission_rate' => ['sometimes', 'nullable', 'numeric', 'min:0', 'max:100'],
+
             'logo' => ['nullable', 'image', 'max:2048'],
 
             'banner' => ['nullable', 'image', 'max:4096'],

@@ -39,6 +39,12 @@ class SupplierResource extends JsonResource
 
             'typical_lead_time' => $this->typical_lead_time,
 
+            'commission_rate' => $this->commission_rate !== null
+                ? (float) $this->commission_rate
+                : null,
+
+            'effective_commission_rate' => $this->effective_commission_rate,
+
             'logo' => $this->logo
                 ? asset('storage/' . $this->logo)
                 : null,

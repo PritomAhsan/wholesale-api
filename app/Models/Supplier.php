@@ -10,6 +10,12 @@ class Supplier extends Model
 {
     use SoftDeletes;
 
+    /**
+     * Applied when a supplier's own commission_rate is null — an
+     * unset rate must mean "not yet configured," never "0%."
+     */
+    public const DEFAULT_COMMISSION_RATE = 10.00;
+
     protected $fillable = [
 
         'uuid',
@@ -42,6 +48,8 @@ class Supplier extends Model
 
         'typical_lead_time',
 
+        'commission_rate',
+
         'logo',
 
         'banner',
@@ -56,6 +64,8 @@ class Supplier extends Model
     protected $casts = [
 
         'approved_at' => 'datetime',
+
+        'commission_rate' => 'decimal:2',
 
     ];
 
@@ -118,6 +128,23 @@ class Supplier extends Model
     public function follows()
     {
         return $this->hasMany(StoreFollow::class);
+    }
+
+    public function payouts()
+    {
+        return $this->hasMany(Payout::class);
+    }
+
+    /**
+     * The effective commission rate — this supplier's own rate if
+     * set, otherwise the platform default. Never treat a null rate
+     * as 0%.
+     */
+    public function getEffectiveCommissionRateAttribute(): float
+    {
+        return $this->commission_rate !== null
+            ? (float) $this->commission_rate
+            : self::DEFAULT_COMMISSION_RATE;
     }
 
     public function getRouteKeyName(): string
