@@ -19,6 +19,14 @@ class SupplierService
             ]);
         }
 
+        $logoPath = isset($data['logo'])
+            ? $data['logo']->store('supplier-logos', 'public')
+            : null;
+
+        $bannerPath = isset($data['banner'])
+            ? $data['banner']->store('supplier-banners', 'public')
+            : null;
+
         $supplier = Supplier::create([
 
             'user_id' => $user->id,
@@ -44,6 +52,10 @@ class SupplierService
             'tax_number' => $data['tax_number'] ?? null,
 
             'description' => $data['description'] ?? null,
+
+            'logo' => $logoPath,
+
+            'banner' => $bannerPath,
 
             'status' => 'pending',
 

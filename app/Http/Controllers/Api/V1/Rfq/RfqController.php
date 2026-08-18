@@ -11,6 +11,36 @@ use App\Models\Supplier;
 
 class RfqController extends ApiController
 {
+    public function index()
+    {
+        $rfqs = Rfq::where('user_id', auth('sanctum')->id())
+            ->with('supplier')
+            ->latest()
+            ->paginate(20);
+
+        return $this->success([
+            'rfqs' => RfqResource::collection($rfqs),
+            'pagination' => [
+                'current_page' => $rfqs->currentPage(),
+                'last_page' => $rfqs->lastPage(),
+                'per_page' => $rfqs->perPage(),
+                'total' => $rfqs->total(),
+            ],
+        ]);
+    }
+
+    public function show(string $uuid)
+    {
+        $rfq = Rfq::where('user_id', auth('sanctum')->id())
+            ->where('uuid', $uuid)
+            ->with('supplier')
+            ->firstOrFail();
+
+        return $this->success([
+            'rfq' => new RfqResource($rfq),
+        ]);
+    }
+
     public function store(StoreRfqRequest $request)
     {
         $data = $request->validated();

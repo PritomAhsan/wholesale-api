@@ -16,6 +16,8 @@ class CategoryResource extends JsonResource
 
             'parent_id' => $this->parent_id,
 
+            'parent_name' => $this->whenLoaded('parent', fn () => $this->parent?->name),
+
             'name' => $this->name,
 
             'slug' => $this->slug,
@@ -35,6 +37,11 @@ class CategoryResource extends JsonResource
             'status' => $this->status,
 
             'children_count' => $this->children()->count(),
+
+            'children' => $this->whenLoaded(
+                'children',
+                fn () => CategoryResource::collection($this->children)
+            ),
 
             'products_count' => $this->whenCounted(
                 'products',

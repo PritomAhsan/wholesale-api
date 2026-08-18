@@ -342,6 +342,16 @@ class Product extends Model
             ->where('is_primary', true);
     }
 
+    public function deals()
+    {
+        return $this->hasMany(Deal::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
     public function approvals()
     {
         return $this->hasMany(ProductApproval::class)

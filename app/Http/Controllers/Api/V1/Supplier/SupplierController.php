@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Supplier;
 
 use App\Http\Controllers\Api\V1\ApiController;
 use App\Http\Requests\Supplier\RegisterSupplierRequest;
+use App\Http\Requests\Supplier\UpdateSupplierRequest;
 use App\Http\Resources\Supplier\SupplierResource;
 use App\Models\Supplier;
 use App\Services\SupplierService;
@@ -108,5 +109,43 @@ class SupplierController extends ApiController
         return $this->success([
             'supplier' => $supplier ? new SupplierResource($supplier) : null,
         ]);
+    }
+
+    /**
+     * Single supplier (admin).
+     */
+    public function show(Supplier $supplier)
+    {
+        $supplier->loadCount('products');
+
+        return $this->success([
+            'supplier' => new SupplierResource($supplier),
+        ]);
+    }
+
+    /**
+     * Update a supplier (admin).
+     */
+    public function update(UpdateSupplierRequest $request, Supplier $supplier)
+    {
+        $data = $request->validated();
+
+        if ($request->hasFile('logo')) {
+            $data['logo'] = $request->file('logo')->store('supplier-logos', 'public');
+        } else {
+            unset($data['logo']);
+        }
+
+        if ($request->hasFile('banner')) {
+            $data['banner'] = $request->file('banner')->store('supplier-banners', 'public');
+        } else {
+            unset($data['banner']);
+        }
+
+        $supplier->update($data);
+
+        return $this->success([
+            'supplier' => new SupplierResource($supplier->fresh()->loadCount('products')),
+        ], 'Supplier updated.');
     }
 }

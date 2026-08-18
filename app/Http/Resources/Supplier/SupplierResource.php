@@ -13,6 +13,8 @@ class SupplierResource extends JsonResource
 
             'uuid' => $this->uuid,
 
+            'seller_id' => $this->seller_id,
+
             'company_name' => $this->company_name,
 
             'company_slug' => $this->company_slug,
@@ -27,7 +29,15 @@ class SupplierResource extends JsonResource
 
             'website' => $this->website,
 
+            'registration_number' => $this->registration_number,
+
+            'tax_number' => $this->tax_number,
+
             'description' => $this->description,
+
+            'fulfillment_region' => $this->fulfillment_region,
+
+            'typical_lead_time' => $this->typical_lead_time,
 
             'logo' => $this->logo
                 ? asset('storage/' . $this->logo)

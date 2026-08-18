@@ -14,6 +14,8 @@ class Supplier extends Model
 
         'uuid',
 
+        'seller_id',
+
         'user_id',
 
         'company_name',
@@ -35,6 +37,10 @@ class Supplier extends Model
         'tax_number',
 
         'description',
+
+        'fulfillment_region',
+
+        'typical_lead_time',
 
         'logo',
 
@@ -64,6 +70,18 @@ class Supplier extends Model
                 $supplier->company_slug = Str::slug(
                     $supplier->company_name
                 );
+            }
+
+            if (empty($supplier->seller_id)) {
+
+                do {
+
+                    $sellerId = 'BLK-' . strtoupper(Str::random(6));
+
+                } while (static::where('seller_id', $sellerId)->exists());
+
+                $supplier->seller_id = $sellerId;
+
             }
 
         });
@@ -105,6 +123,6 @@ class Supplier extends Model
      */
     public function getDisplayNameAttribute(): string
     {
-        return 'BULKARE Seller #' . strtoupper(substr($this->uuid, 0, 6));
+        return $this->seller_id ?? 'BULKARE Seller';
     }
 }

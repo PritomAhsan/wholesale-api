@@ -55,6 +55,18 @@ class RegisterSupplierRequest extends FormRequest
                 'string'
             ],
 
+            'logo' => [
+                'nullable',
+                'image',
+                'max:2048',
+            ],
+
+            'banner' => [
+                'nullable',
+                'image',
+                'max:4096',
+            ],
+
         ];
     }
 }

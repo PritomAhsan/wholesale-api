@@ -37,6 +37,8 @@ class ProductListResource extends JsonResource
 
                 'uuid' => $this->supplier?->uuid,
 
+                'seller_id' => $this->supplier?->seller_id,
+
                 'display_name' => $this->supplier?->display_name,
 
             ],
@@ -72,6 +74,12 @@ class ProductListResource extends JsonResource
             'approval_count' => $this->whenCounted(
                 'approvals'
             ),
+
+            'average_rating' => $this->reviews_avg_rating
+                ? round((float) $this->reviews_avg_rating, 1)
+                : null,
+
+            'reviews_count' => $this->reviews_count ?? 0,
 
             'last_updated' => $this->updated_at,
 

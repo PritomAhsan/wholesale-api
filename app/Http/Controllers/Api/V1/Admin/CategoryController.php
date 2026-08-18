@@ -18,6 +18,7 @@ class CategoryController extends ApiController
     public function index(Request $request)
     {
         $categories = Category::query()
+                    ->with('parent')
                     ->when(
                         $request->filled('search'),
                         fn ($q) => $q->where(

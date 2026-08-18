@@ -7,6 +7,7 @@ use App\Models\Attribute;
 use App\Models\AttributeValue;
 use App\Models\Brand;
 use App\Models\Category;
+use App\Models\Product;
 use App\Models\Supplier;
 use App\Models\Unit;
 use Illuminate\Database\Eloquent\Builder;
@@ -83,6 +84,24 @@ class LookupController extends Controller
                 'id',
                 'uuid',
                 'company_name',
+            ]
+
+        );
+    }
+
+    /**
+     * Published products, for admin selects (e.g. deal authoring).
+     */
+    public function products(): JsonResponse
+    {
+        return $this->lookup(
+
+            Product::query()->where('status', 'published'),
+
+            [
+                'id',
+                'uuid',
+                'name',
             ]
 
         );

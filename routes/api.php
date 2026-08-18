@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Supplier\SupplierController;
+use App\Http\Controllers\Api\V1\Supplier\PublicSupplierController;
 use App\Http\Controllers\Api\V1\Admin\SupplierApprovalController;
 use App\Http\Controllers\Api\V1\Admin\CategoryController;
 use App\Http\Controllers\Api\V1\Product\PublicCategoryController;
@@ -12,6 +13,11 @@ use App\Http\Controllers\Api\V1\Admin\UnitController;
 use App\Http\Controllers\Api\V1\Product\PublicUnitController;
 use App\Http\Controllers\Api\V1\Product\PublicProductController;
 use App\Http\Controllers\Api\V1\Rfq\RfqController;
+use App\Http\Controllers\Api\V1\Review\ReviewController;
+use App\Http\Controllers\Api\V1\Deal\DealController;
+use App\Http\Controllers\Api\V1\Deal\DealAlertController;
+use App\Http\Controllers\Api\V1\Newsletter\NewsletterController;
+use App\Http\Controllers\Api\V1\Support\ContactController;
 use App\Http\Controllers\Api\V1\Order\OrderController;
 use App\Http\Controllers\Api\V1\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Api\V1\Admin\DashboardController as AdminDashboardController;
@@ -31,6 +37,10 @@ use App\Http\Controllers\Api\V1\Admin\InventoryReportController;
 use App\Http\Controllers\Api\V1\Admin\ProductApprovalController;
 use App\Http\Controllers\Api\V1\Admin\ProductStatusController;
 use App\Http\Controllers\Api\V1\Admin\ProductQueryController;
+use App\Http\Controllers\Api\V1\Admin\NewsletterController as AdminNewsletterController;
+use App\Http\Controllers\Api\V1\Admin\ContactMessageController;
+use App\Http\Controllers\Api\V1\Admin\DealController as AdminDealController;
+use App\Http\Controllers\Api\V1\Admin\CustomerController;
 use App\Http\Controllers\Api\Admin\Lookup\LookupController;
 
 Route::prefix('lookups')
@@ -54,6 +64,11 @@ Route::prefix('lookups')
         Route::get(
             'suppliers',
             [LookupController::class, 'suppliers']
+        );
+
+        Route::get(
+            'products',
+            [LookupController::class, 'products']
         );
 
         Route::get(
@@ -100,11 +115,24 @@ Route::prefix('v1')->group(function () {
     Route::get('/products', [PublicProductController::class, 'index']);
     Route::get('/products/{slug}', [PublicProductController::class, 'show']);
 
+    Route::get('/products/{product}/reviews', [ReviewController::class, 'index']);
+
     // No public supplier directory — sellers stay anonymous to buyers
     // so buyers can't identify and route around the platform to order
-    // directly from a supplier.
+    // directly from a supplier. A profile is only reachable by its
+    // public Seller ID, surfaced from product listings.
+    Route::get('/sellers/featured', [PublicSupplierController::class, 'featured']);
+    Route::get('/sellers/{sellerId}', [PublicSupplierController::class, 'show']);
 
     Route::post('/rfqs', [RfqController::class, 'store']);
+
+    Route::get('/deals', [DealController::class, 'index']);
+    Route::get('/deals/{deal}', [DealController::class, 'show']);
+    Route::post('/deal-alerts/subscribe', [DealAlertController::class, 'store']);
+
+    Route::post('/newsletter/subscribe', [NewsletterController::class, 'subscribe']);
+
+    Route::post('/contact', [ContactController::class, 'store']);
 
     Route::prefix('auth')->group(function () {
 
@@ -157,6 +185,26 @@ Route::prefix('v1')->group(function () {
             [OrderController::class, 'cancel']
         );
 
+        Route::get(
+            '/rfqs',
+            [RfqController::class, 'index']
+        );
+
+        Route::get(
+            '/rfqs/{uuid}',
+            [RfqController::class, 'show']
+        );
+
+        Route::get(
+            '/products/{product}/reviews/eligibility',
+            [ReviewController::class, 'eligibility']
+        );
+
+        Route::post(
+            '/products/{product}/reviews',
+            [ReviewController::class, 'store']
+        );
+
     });
 
     Route::middleware([
@@ -196,6 +244,16 @@ Route::prefix('v1')->group(function () {
             [SupplierController::class, 'approved']
         );
 
+        Route::get(
+            '/admin/suppliers/{supplier}',
+            [SupplierController::class, 'show']
+        );
+
+        Route::put(
+            '/admin/suppliers/{supplier}',
+            [SupplierController::class, 'update']
+        );
+
     });
 
     Route::middleware([
@@ -229,6 +287,21 @@ Route::prefix('v1')->group(function () {
             '/rfqs/{uuid}/respond',
             [AdminRfqController::class, 'respond']
         );
+
+        Route::get('/newsletter-subscribers', [AdminNewsletterController::class, 'index']);
+
+        Route::get('/contact-messages', [ContactMessageController::class, 'index']);
+        Route::get('/contact-messages/{uuid}', [ContactMessageController::class, 'show']);
+        Route::patch('/contact-messages/{uuid}/status', [ContactMessageController::class, 'updateStatus']);
+
+        Route::get('/deals', [AdminDealController::class, 'index']);
+        Route::post('/deals', [AdminDealController::class, 'store']);
+        Route::get('/deals/alert-subscriptions', [AdminDealController::class, 'alertSubscriptions']);
+        Route::get('/deals/{deal}', [AdminDealController::class, 'show']);
+        Route::put('/deals/{deal}', [AdminDealController::class, 'update']);
+        Route::delete('/deals/{deal}', [AdminDealController::class, 'destroy']);
+
+        Route::get('/customers', [CustomerController::class, 'index']);
 
     });
 

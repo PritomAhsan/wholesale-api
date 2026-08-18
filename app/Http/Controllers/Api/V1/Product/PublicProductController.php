@@ -21,6 +21,8 @@ class PublicProductController extends ApiController
             ->with(['supplier', 'brand', 'categories', 'images'])
             ->withCount('variants')
             ->withSum('variants', 'stock_quantity')
+            ->withCount(['reviews' => fn ($q) => $q->where('status', 'approved')])
+            ->withAvg(['reviews' => fn ($q) => $q->where('status', 'approved')], 'rating')
             ->when(
                 $request->filled('search'),
                 function ($query) use ($request) {
@@ -65,6 +67,22 @@ class PublicProductController extends ApiController
             ->when(
                 $request->filled('max_price'),
                 fn ($query) => $query->where('selling_price', '<=', $request->float('max_price'))
+            )
+            ->when(
+                $request->filled('min_moq'),
+                fn ($query) => $query->where('min_order_quantity', '>=', $request->float('min_moq'))
+            )
+            ->when(
+                $request->filled('max_moq'),
+                fn ($query) => $query->where('min_order_quantity', '<=', $request->float('max_moq'))
+            )
+            ->when(
+                $request->filled('created_after'),
+                fn ($query) => $query->where('created_at', '>=', $request->date('created_after'))
+            )
+            ->when(
+                $request->boolean('in_stock'),
+                fn ($query) => $query->where('stock_quantity', '>', 0)
             )
             ->orderBy(
                 match ($request->get('sort')) {
@@ -116,7 +134,11 @@ class PublicProductController extends ApiController
             'variants.attributeValues.attribute',
             'variants.attributeValues.value',
             'variants.images',
+            'deals',
         ]);
+
+        $product->loadCount(['reviews' => fn ($q) => $q->where('status', 'approved')]);
+        $product->loadAvg(['reviews' => fn ($q) => $q->where('status', 'approved')], 'rating');
 
         return $this->success([
             'product' => new ProductResource($product),

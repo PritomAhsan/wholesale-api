@@ -43,6 +43,8 @@ class ProductResource extends JsonResource
 
                     'uuid' => $this->supplier->uuid,
 
+                    'seller_id' => $this->supplier->seller_id,
+
                     'display_name' => $this->supplier->display_name,
 
                 ];
@@ -182,6 +184,37 @@ class ProductResource extends JsonResource
             'discount_percentage' => $this->discount_percentage,
 
             'currency' => $this->currency,
+
+            'average_rating' => $this->reviews_avg_rating
+                ? round((float) $this->reviews_avg_rating, 1)
+                : null,
+
+            'reviews_count' => $this->reviews_count ?? 0,
+
+            // Quantity price breaks — only present when a real bulk deal
+            // has been authored for this product, never fabricated.
+            'price_tiers' => $this->whenLoaded('deals', function () {
+
+                return $this->deals
+                    ->where('type', 'bulk')
+                    ->where('status', 'active')
+                    ->sortBy('min_quantity')
+                    ->values()
+                    ->map(function ($deal) {
+
+                        return [
+
+                            'min_quantity' => $deal->min_quantity,
+
+                            'discount_percent' => $deal->discount_percent,
+
+                            'discount_price' => $deal->discount_price,
+
+                        ];
+
+                    });
+
+            }),
 
             /*
             |--------------------------------------------------------------------------
