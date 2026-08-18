@@ -27,6 +27,8 @@ use App\Http\Controllers\Api\V1\Supplier\SupplierOrderController;
 use App\Http\Controllers\Api\V1\Supplier\SupplierDashboardController;
 use App\Http\Controllers\Api\V1\Supplier\PayoutController as SupplierPayoutController;
 use App\Http\Controllers\Api\V1\Admin\PayoutController as AdminPayoutController;
+use App\Http\Controllers\Api\V1\Dispute\DisputeController;
+use App\Http\Controllers\Api\V1\Admin\DisputeController as AdminDisputeController;
 use App\Http\Controllers\Api\V1\Admin\RfqController as AdminRfqController;
 use App\Http\Controllers\Api\V1\Admin\ProductAttributeController;
 use App\Http\Controllers\Api\V1\Product\PublicProductAttributeController;
@@ -190,6 +192,11 @@ Route::prefix('v1')->group(function () {
             [OrderController::class, 'cancel']
         );
 
+        Route::get('/disputes', [DisputeController::class, 'index']);
+        Route::get('/disputes/{dispute}', [DisputeController::class, 'show']);
+        Route::post('/seller-orders/{sellerOrderUuid}/disputes', [DisputeController::class, 'store']);
+        Route::post('/disputes/{dispute}/evidence', [DisputeController::class, 'addEvidence']);
+
         Route::get(
             '/rfqs',
             [RfqController::class, 'index']
@@ -331,6 +338,11 @@ Route::prefix('v1')->group(function () {
         Route::get('/payouts', [AdminPayoutController::class, 'index']);
         Route::get('/payouts/{payout}', [AdminPayoutController::class, 'show']);
         Route::patch('/payouts/{payout}/mark-paid', [AdminPayoutController::class, 'markPaid']);
+
+        Route::get('/disputes', [AdminDisputeController::class, 'index']);
+        Route::get('/disputes/{dispute}', [AdminDisputeController::class, 'show']);
+        Route::patch('/disputes/{dispute}/resolve', [AdminDisputeController::class, 'resolve']);
+        Route::post('/disputes/{dispute}/evidence', [AdminDisputeController::class, 'addEvidence']);
 
     });
 

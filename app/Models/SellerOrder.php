@@ -93,4 +93,9 @@ class SellerOrder extends Model
     {
         return $this->belongsTo(Payout::class);
     }
+
+    public function disputes()
+    {
+        return $this->hasMany(Dispute::class);
+    }
 }
