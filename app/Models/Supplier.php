@@ -110,6 +110,16 @@ class Supplier extends Model
         return $this->hasMany(SellerOrder::class);
     }
 
+    public function storeReviews()
+    {
+        return $this->hasMany(StoreReview::class);
+    }
+
+    public function follows()
+    {
+        return $this->hasMany(StoreFollow::class);
+    }
+
     public function getRouteKeyName(): string
     {
         return 'uuid';

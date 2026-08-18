@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\Supplier;
 
+use App\Models\StoreFollow;
+use App\Services\Supplier\SellerVerificationScoreService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,6 +17,8 @@ class SupplierPublicResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $trust = app(SellerVerificationScoreService::class)->scoreFor($this->resource);
+
         return [
 
             'seller_id' => $this->seller_id,
@@ -58,6 +62,30 @@ class SupplierPublicResource extends JsonResource
                 'products',
                 fn () => $this->products->count()
             ),
+
+            'completed_order_count' => $trust['completed_order_count'],
+
+            'store_rating' => $trust['avg_rating'] !== null
+                ? round($trust['avg_rating'], 1)
+                : null,
+
+            'reviews_count' => $trust['review_count'],
+
+            'verification_score' => $trust['score'],
+
+            'badges' => $trust['badges'],
+
+            // Resolved via the sanctum guard directly rather than
+            // $request->user() — this resource is also rendered from
+            // the public /sellers/{sellerId} route, which has no
+            // auth:sanctum middleware (a logged-out buyer must still
+            // see the profile), so nothing upstream has attempted
+            // token resolution yet.
+            'is_followed' => auth('sanctum')->user()
+                ? StoreFollow::where('user_id', auth('sanctum')->id())
+                    ->where('supplier_id', $this->id)
+                    ->exists()
+                : null,
 
         ];
     }

@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Supplier\SupplierController;
 use App\Http\Controllers\Api\V1\Supplier\PublicSupplierController;
+use App\Http\Controllers\Api\V1\Supplier\StoreReviewController;
+use App\Http\Controllers\Api\V1\Supplier\StoreFollowController;
 use App\Http\Controllers\Api\V1\Admin\SupplierApprovalController;
 use App\Http\Controllers\Api\V1\Admin\CategoryController;
 use App\Http\Controllers\Api\V1\Product\PublicCategoryController;
@@ -123,6 +125,7 @@ Route::prefix('v1')->group(function () {
     // public Seller ID, surfaced from product listings.
     Route::get('/sellers/featured', [PublicSupplierController::class, 'featured']);
     Route::get('/sellers/{sellerId}', [PublicSupplierController::class, 'show']);
+    Route::get('/sellers/{sellerId}/reviews', [StoreReviewController::class, 'index']);
 
     Route::post('/rfqs', [RfqController::class, 'store']);
 
@@ -203,6 +206,26 @@ Route::prefix('v1')->group(function () {
         Route::post(
             '/products/{product}/reviews',
             [ReviewController::class, 'store']
+        );
+
+        Route::get(
+            '/sellers/{sellerId}/reviews/eligibility',
+            [StoreReviewController::class, 'eligibility']
+        );
+
+        Route::post(
+            '/sellers/{sellerId}/reviews',
+            [StoreReviewController::class, 'store']
+        );
+
+        Route::post(
+            '/sellers/{sellerId}/follow',
+            [StoreFollowController::class, 'toggle']
+        );
+
+        Route::get(
+            '/sellers/me/followed',
+            [StoreFollowController::class, 'mine']
         );
 
     });
