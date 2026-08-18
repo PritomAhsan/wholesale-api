@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Enums\ProductStatus;
 use App\Http\Controllers\Api\V1\ApiController;
+use App\Http\Controllers\Concerns\ScopesToOwnSupplier;
 use App\Http\Requests\ProductApproval\ApproveProductRequest;
 use App\Http\Requests\ProductApproval\RejectProductRequest;
 use App\Http\Requests\ProductApproval\SubmitProductForReviewRequest;
@@ -19,6 +20,8 @@ use Illuminate\Http\Request;
 
 class ProductApprovalController extends ApiController
 {
+    use ScopesToOwnSupplier;
+
     protected ProductApprovalQueryService $queryService;
     protected ProductApprovalService $service;
 
@@ -34,6 +37,8 @@ class ProductApprovalController extends ApiController
         SubmitProductForReviewRequest $request,
         Product $product
     ): JsonResponse {
+
+        $this->authorizeProductAccess($product);
 
         $product = $this->service->submit(
             $product,
@@ -77,6 +82,8 @@ class ProductApprovalController extends ApiController
 
     public function history(Product $product): JsonResponse
     {
+        $this->authorizeProductAccess($product);
+
         return $this->success([
             'history' => ProductApprovalResource::collection(
                 $product->approvals()->paginate(20)
@@ -109,6 +116,8 @@ class ProductApprovalController extends ApiController
 
     public function timeline(Product $product)
     {
+        $this->authorizeProductAccess($product);
+
         return $this->success([
 
             'timeline' => ProductApprovalTimelineResource::collection(

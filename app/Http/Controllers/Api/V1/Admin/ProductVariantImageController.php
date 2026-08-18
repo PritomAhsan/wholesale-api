@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Api\V1\ApiController;
+use App\Http\Controllers\Concerns\ScopesToOwnSupplier;
 use App\Http\Requests\ProductVariantImage\UploadProductVariantImagesRequest;
 use App\Http\Resources\ProductVariantImage\ProductVariantImageResource;
 use App\Models\Product;
@@ -14,6 +15,8 @@ use Throwable;
 
 class ProductVariantImageController extends ApiController
 {
+    use ScopesToOwnSupplier;
+
     public function __construct(
         protected ProductVariantImageService $service
     ) {
@@ -65,6 +68,8 @@ class ProductVariantImageController extends ApiController
         int|string $variant_id
     ): JsonResponse {
         try {
+            $this->authorizeProductAccess($product);
+
             $variantModel = $this->resolveVariant(
                 $product,
                 $variant_id
@@ -104,6 +109,8 @@ class ProductVariantImageController extends ApiController
         string $image
     ): JsonResponse {
         try {
+            $this->authorizeProductAccess($product);
+
             $variantModel = $this->resolveVariant(
                 $product,
                 $variant_id
@@ -139,6 +146,8 @@ class ProductVariantImageController extends ApiController
         string $image
     ): JsonResponse {
         try {
+            $this->authorizeProductAccess($product);
+
             $variantModel = $this->resolveVariant(
                 $product,
                 $variant_id

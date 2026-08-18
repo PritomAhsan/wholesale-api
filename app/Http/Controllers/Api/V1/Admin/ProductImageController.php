@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Api\V1\ApiController;
+use App\Http\Controllers\Concerns\ScopesToOwnSupplier;
 use App\Http\Requests\ProductImage\ReorderProductImagesRequest;
 use App\Http\Requests\ProductImage\UpdateProductImageRequest;
 use App\Http\Requests\ProductImage\UploadProductImagesRequest;
@@ -15,6 +16,8 @@ use Throwable;
 
 class ProductImageController extends ApiController
 {
+    use ScopesToOwnSupplier;
+
     public function __construct(
         protected ProductImageService $service
     ) {
@@ -49,6 +52,8 @@ class ProductImageController extends ApiController
     ): JsonResponse {
 
         try {
+
+            $this->authorizeProductAccess($product);
 
             $images = $this->service->upload(
 
@@ -90,6 +95,8 @@ class ProductImageController extends ApiController
     ): JsonResponse {
 
         try {
+
+            $this->authorizeProductAccess($product);
 
             $this->ensureOwnership($product, $image);
 
@@ -133,6 +140,8 @@ class ProductImageController extends ApiController
 
         try {
 
+            $this->authorizeProductAccess($product);
+
             $this->ensureOwnership($product, $image);
 
             $this->service->delete($image);
@@ -171,6 +180,8 @@ class ProductImageController extends ApiController
 
         try {
 
+            $this->authorizeProductAccess($product);
+
             $this->ensureOwnership($product, $image);
 
             $this->service->setPrimary($image);
@@ -208,6 +219,8 @@ class ProductImageController extends ApiController
     ): JsonResponse {
 
         try {
+
+            $this->authorizeProductAccess($product);
 
             $this->service->reorder(
 

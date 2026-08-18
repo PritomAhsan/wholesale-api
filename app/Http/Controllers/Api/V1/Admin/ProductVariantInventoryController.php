@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Enums\InventoryTransactionType;
 use App\Http\Controllers\Api\V1\ApiController;
+use App\Http\Controllers\Concerns\ScopesToOwnSupplier;
 use App\Http\Requests\Inventory\AdjustInventoryRequest;
 use App\Http\Requests\Inventory\DecreaseInventoryRequest;
 use App\Http\Requests\Inventory\IncreaseInventoryRequest;
@@ -15,6 +16,8 @@ use Illuminate\Http\JsonResponse;
 
 class ProductVariantInventoryController extends ApiController
 {
+    use ScopesToOwnSupplier;
+
     public function __construct(
         protected InventoryService $inventoryService
     ) {
@@ -27,11 +30,16 @@ class ProductVariantInventoryController extends ApiController
      * Route::bind('variant', ...) in AppServiceProvider that looks up
      * ProductVariant by uuid for any parameter literally named
      * "variant", which would 404 given the numeric id this route
-     * actually receives.
+     * actually receives. Not scoped to any product, so ownership is
+     * checked against the variant's own parent product below.
      */
     protected function resolveVariant(int|string $variant_id): ProductVariant
     {
-        return ProductVariant::findOrFail($variant_id);
+        $variant = ProductVariant::with('product')->findOrFail($variant_id);
+
+        $this->authorizeProductAccess($variant->product);
+
+        return $variant;
     }
 
     public function show(int|string $variant_id): JsonResponse

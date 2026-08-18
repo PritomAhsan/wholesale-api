@@ -458,7 +458,23 @@ Route::prefix('v1')->group(function () {
     ->middleware(['auth:sanctum', 'role:Super Admin|Admin|Supplier'])
     ->group(function () {
 
+        // Create/list/view/edit/delete own products — ownership is
+        // enforced in ProductController via ScopesToOwnSupplier.
         Route::apiResource('products', ProductController::class);
+
+        // A supplier may adjust their own product's stock, but not
+        // approve, publish, archive, restore or feature it — those
+        // are moderation/marketing decisions, kept admin-only below.
+        Route::patch(
+            'products/{product}/stock',
+            [ProductController::class, 'updateStock']
+        );
+
+    });
+
+    Route::prefix('admin')
+    ->middleware(['auth:sanctum', 'role:Super Admin|Admin'])
+    ->group(function () {
 
         Route::patch(
             'products/{product}/restore',
@@ -495,9 +511,67 @@ Route::prefix('v1')->group(function () {
             [ProductController::class, 'toggleFeatured']
         );
 
-        Route::patch(
-            'products/{product}/stock',
-            [ProductController::class, 'updateStock']
+        // Moderator queue and verdicts — a supplier may submit their
+        // own product (see the shared group above) but never approve,
+        // reject, or see another supplier's queue/stats/history.
+        Route::get(
+            'products/approval/pending',
+            [ProductApprovalController::class, 'pending']
+        );
+
+        Route::post(
+            'products/{product}/approval/approve',
+            [ProductApprovalController::class, 'approve']
+        );
+
+        Route::post(
+            'products/{product}/approval/reject',
+            [ProductApprovalController::class, 'reject']
+        );
+
+        Route::get(
+            'products/approval/statistics',
+            [ProductApprovalController::class, 'statistics']
+        );
+
+        Route::get(
+            'products/suppliers/{user}/approval/history',
+            [ProductApprovalController::class, 'supplierHistory']
+        );
+
+        // Duplicate status-mutation surface (ProductStatusController)
+        // — same admin-only rule as the ProductController verbs above.
+        Route::post(
+            'products/{product}/status/publish',
+            [ProductStatusController::class, 'publish']
+        );
+
+        Route::post(
+            'products/{product}/status/unpublish',
+            [ProductStatusController::class, 'unpublish']
+        );
+
+        Route::post(
+            'products/{product}/status/archive',
+            [ProductStatusController::class, 'archive']
+        );
+
+        Route::post(
+            'products/{product}/status/restore',
+            [ProductStatusController::class, 'restore']
+        );
+
+        // Unscoped cross-supplier catalog query/statistics — not
+        // needed by any supplier UI, and would otherwise leak every
+        // supplier's cost prices and stock to any other supplier.
+        Route::get(
+            'products/query',
+            [ProductQueryController::class, 'index']
+        );
+
+        Route::get(
+            'products/query/statistics',
+            [ProductQueryController::class, 'statistics']
         );
 
     });
@@ -668,26 +742,15 @@ Route::prefix('v1')->group(function () {
 
         });
 
+        // A supplier may submit their own product for review and see
+        // its own approval history/timeline — not another supplier's,
+        // and never the moderator queue or the approve/reject verbs
+        // themselves (moved to the admin-only group below).
         Route::prefix('products')->group(function () {
-
-            Route::get(
-                'approval/pending',
-                [ProductApprovalController::class, 'pending']
-            );
 
             Route::post(
                 '{product}/approval/submit',
                 [ProductApprovalController::class, 'submit']
-            );
-
-            Route::post(
-                '{product}/approval/approve',
-                [ProductApprovalController::class, 'approve']
-            );
-
-            Route::post(
-                '{product}/approval/reject',
-                [ProductApprovalController::class, 'reject']
             );
 
             Route::get(
@@ -700,57 +763,13 @@ Route::prefix('v1')->group(function () {
                 [ProductApprovalController::class, 'timeline']
             );
 
-            Route::get(
-                'approval/statistics',
-                [ProductApprovalController::class, 'statistics']
-            );
-
-            Route::get(
-                'suppliers/{user}/approval/history',
-                [ProductApprovalController::class, 'supplierHistory']
-            );
-
         });
 
         Route::prefix('products/{product}/status')->group(function () {
 
-            Route::post(
-                '/publish',
-                [ProductStatusController::class, 'publish']
-            );
-
-            Route::post(
-                '/unpublish',
-                [ProductStatusController::class, 'unpublish']
-            );
-
-            Route::post(
-                '/archive',
-                [ProductStatusController::class, 'archive']
-            );
-
-            Route::post(
-                '/restore',
-                [ProductStatusController::class, 'restore']
-            );
-
             Route::get(
                 '/history',
                 [ProductStatusController::class, 'history']
-            );
-
-        });
-
-        Route::prefix('products')->group(function () {
-
-            Route::get(
-                'query',
-                [ProductQueryController::class, 'index']
-            );
-
-            Route::get(
-                'query/statistics',
-                [ProductQueryController::class, 'statistics']
             );
 
         });

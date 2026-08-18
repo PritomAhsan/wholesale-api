@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Api\V1\ApiController;
+use App\Http\Controllers\Concerns\ScopesToOwnSupplier;
 use App\Http\Requests\ProductStatus\ArchiveProductRequest;
 use App\Http\Requests\ProductStatus\PublishProductRequest;
 use App\Http\Requests\ProductStatus\RestoreProductRequest;
@@ -15,6 +16,8 @@ use Illuminate\Http\JsonResponse;
 
 class ProductStatusController extends ApiController
 {
+    use ScopesToOwnSupplier;
+
     public function __construct(
         protected ProductStatusService $service
     ) {
@@ -82,6 +85,8 @@ class ProductStatusController extends ApiController
 
     public function history(Product $product): JsonResponse
     {
+        $this->authorizeProductAccess($product);
+
         return $this->success([
 
             'history' => ProductStatusHistoryResource::collection(

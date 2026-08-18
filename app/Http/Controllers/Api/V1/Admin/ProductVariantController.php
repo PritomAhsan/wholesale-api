@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Http\Controllers\Api\V1\ApiController;
+use App\Http\Controllers\Concerns\ScopesToOwnSupplier;
 use App\Http\Requests\ProductVariant\ProductVariantRequest;
 use App\Http\Resources\ProductVariant\ProductVariantResource;
 use App\Models\Product;
@@ -14,6 +15,8 @@ use Throwable;
 
 class ProductVariantController extends ApiController
 {
+    use ScopesToOwnSupplier;
+
     public function __construct(
         protected ProductVariantService $service
     ) {
@@ -98,6 +101,8 @@ class ProductVariantController extends ApiController
 
         try {
 
+            $this->authorizeProductAccess($product);
+
             $perPage = max(
                 1,
                 min(
@@ -168,6 +173,8 @@ class ProductVariantController extends ApiController
 
         try {
 
+            $this->authorizeProductAccess($product);
+
             $variant = $this->resolveVariant(
                 $product,
                 $variant_id
@@ -223,6 +230,8 @@ class ProductVariantController extends ApiController
 
         try {
 
+            $this->authorizeProductAccess($product);
+
             $variant = $this->service->create(
 
                 $product,
@@ -273,6 +282,8 @@ class ProductVariantController extends ApiController
     ): JsonResponse {
 
         try {
+
+            $this->authorizeProductAccess($product);
 
             $variant = $this->resolveVariant(
 
@@ -332,6 +343,8 @@ class ProductVariantController extends ApiController
 
         try {
 
+            $this->authorizeProductAccess($product);
+
             $variant = $this->resolveVariant(
 
                 $product,
@@ -385,6 +398,8 @@ class ProductVariantController extends ApiController
     ): JsonResponse {
 
         try {
+
+            $this->authorizeProductAccess($product);
 
             $variant = ProductVariant::withTrashed()
 
@@ -441,6 +456,8 @@ class ProductVariantController extends ApiController
     ): JsonResponse {
 
         try {
+
+            $this->authorizeProductAccess($product);
 
             $variant = ProductVariant::withTrashed()
 

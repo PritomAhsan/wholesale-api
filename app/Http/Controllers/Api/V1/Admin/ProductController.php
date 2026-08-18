@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1\Admin;
 
 use App\Enums\ProductStatus;
 use App\Http\Controllers\Api\V1\ApiController;
+use App\Http\Controllers\Concerns\ScopesToOwnSupplier;
 use App\Http\Requests\Product\ProductRequest;
 use App\Http\Resources\Product\ProductResource;
 use App\Http\Resources\Product\ProductListResource;
@@ -17,6 +18,8 @@ use Throwable;
 
 class ProductController extends ApiController
 {
+    use ScopesToOwnSupplier;
+
     /**
      * Product Service
      */
@@ -100,99 +103,10 @@ class ProductController extends ApiController
     | A user with ONLY the Supplier role (not also Admin/Super Admin)
     | must never see or modify another supplier's products — these
     | endpoints are shared between admin staff and suppliers via the
-    | same role:Super Admin|Admin|Supplier middleware, so the scoping
-    | has to happen here.
+    | same role:Super Admin|Admin|Supplier middleware. Scoping helpers
+    | live in the ScopesToOwnSupplier trait (shared with the variant,
+    | image and approval controllers).
     */
-
-    /**
-     * True if the current user is a supplier-only account (no admin
-     * roles), meaning access must be scoped to their own data.
-     */
-    protected function isSupplierOnly(Request $request): bool
-    {
-        $user = $request->user();
-
-        return $user
-            && $user->hasRole('Supplier')
-            && ! $user->hasAnyRole(['Super Admin', 'Admin']);
-    }
-
-    /**
-     * The authenticated supplier's own supplier_id, or abort with 403
-     * if this user has the Supplier role but no approved supplier
-     * record (shouldn't normally happen, but fail closed rather than
-     * exposing/scoping to nothing).
-     */
-    protected function ownSupplierId(Request $request): int
-    {
-        $supplier = $request->user()->supplier;
-
-        abort_if(
-            ! $supplier,
-            403,
-            'No supplier account is associated with this user.'
-        );
-
-        return $supplier->id;
-    }
-
-    /**
-     * Restrict a product list query to the current supplier's own
-     * products when the user is supplier-only. No-op for admin staff.
-     */
-    protected function scopeToOwnSupplier(
-        Builder $query,
-        Request $request
-    ): Builder {
-
-        if (! $this->isSupplierOnly($request)) {
-            return $query;
-        }
-
-        return $query->where(
-            'supplier_id',
-            $this->ownSupplierId($request)
-        );
-    }
-
-    /**
-     * Abort with 403 if this is a supplier-only user trying to touch
-     * a product that isn't theirs. No-op for admin staff.
-     */
-    protected function authorizeProductAccess(
-        Product $product,
-        Request $request
-    ): void {
-
-        if (! $this->isSupplierOnly($request)) {
-            return;
-        }
-
-        abort_unless(
-            $product->supplier_id === $this->ownSupplierId($request),
-            403,
-            'You do not have access to this product.'
-        );
-
-    }
-
-    /**
-     * Force supplier_id to the current user's own supplier on
-     * create/update, regardless of what was submitted — a supplier
-     * must never be able to create or reassign a product to another
-     * supplier's name.
-     */
-    protected function enforceOwnSupplierId(
-        array $data,
-        Request $request
-    ): array {
-
-        if ($this->isSupplierOnly($request)) {
-            $data['supplier_id'] = $this->ownSupplierId($request);
-        }
-
-        return $data;
-    }
 
     /**
      * Apply Brand Filter
@@ -412,10 +326,7 @@ class ProductController extends ApiController
 
             $query = $this->baseQuery();
 
-            $query = $this->scopeToOwnSupplier(
-                $query,
-                $request
-            );
+            $query = $this->scopeToOwnSupplier($query);
 
             /*
             |--------------------------------------------------------------------------
@@ -601,8 +512,12 @@ class ProductController extends ApiController
         try {
 
             $data = $this->enforceOwnSupplierId(
-                $request->validated(),
-                $request
+                $request->validated()
+            );
+
+            $data = $this->stripSupplierRestrictedFields(
+                $data,
+                true
             );
 
             $product = $this->service->create(
@@ -678,7 +593,7 @@ class ProductController extends ApiController
 
         try {
 
-            $this->authorizeProductAccess($product, $request);
+            $this->authorizeProductAccess($product);
 
             $product->load([
 
@@ -749,11 +664,15 @@ class ProductController extends ApiController
 
         try {
 
-            $this->authorizeProductAccess($product, $request);
+            $this->authorizeProductAccess($product);
 
             $data = $this->enforceOwnSupplierId(
-                $request->validated(),
-                $request
+                $request->validated()
+            );
+
+            $data = $this->stripSupplierRestrictedFields(
+                $data,
+                false
             );
 
             $product = $this->service->update(
@@ -833,7 +752,7 @@ class ProductController extends ApiController
 
         try {
 
-            $this->authorizeProductAccess($product, $request);
+            $this->authorizeProductAccess($product);
 
             $this->service->delete($product);
 
@@ -1216,6 +1135,8 @@ class ProductController extends ApiController
         DB::beginTransaction();
 
         try {
+
+            $this->authorizeProductAccess($product);
 
             $product = $this->service->updateStock(
 
