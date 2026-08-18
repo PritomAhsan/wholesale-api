@@ -54,7 +54,7 @@ class BrandSeeder extends Seeder
 
         ];
 
-        foreach ($brands as $brand) {
+        foreach ($brands as $index => $brand) {
 
             Brand::updateOrCreate(
 
@@ -66,9 +66,11 @@ class BrandSeeder extends Seeder
 
                     'slug' => Str::slug($brand),
 
+                    'logo' => 'seed/logos/l' . ($index % 10 + 1) . '.jpg',
+
                     'status' => true,
 
-                    'featured' => false,
+                    'featured' => $index < 6,
 
                 ]
 

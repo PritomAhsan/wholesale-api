@@ -10,17 +10,10 @@ class AttributeSeeder extends Seeder
 {
     public function run(): void
     {
-        $color = Attribute::create([
-
-            'name'=>'Color',
-
-            'type'=>'select',
-
-            'is_filterable'=>true,
-
-            'status'=>true,
-
-        ]);
+        $color = Attribute::updateOrCreate(
+            ['name' => 'Color'],
+            ['type' => 'select', 'is_filterable' => true, 'status' => true]
+        );
 
         foreach([
             'Black',
@@ -30,7 +23,7 @@ class AttributeSeeder extends Seeder
             'Green'
         ] as $value){
 
-            AttributeValue::create([
+            AttributeValue::firstOrCreate([
 
                 'attribute_id'=>$color->id,
 
@@ -40,17 +33,10 @@ class AttributeSeeder extends Seeder
 
         }
 
-        $size = Attribute::create([
-
-            'name'=>'Size',
-
-            'type'=>'select',
-
-            'is_filterable'=>true,
-
-            'status'=>true,
-
-        ]);
+        $size = Attribute::updateOrCreate(
+            ['name' => 'Size'],
+            ['type' => 'select', 'is_filterable' => true, 'status' => true]
+        );
 
         foreach([
             'S',
@@ -60,7 +46,7 @@ class AttributeSeeder extends Seeder
             'XXL'
         ] as $value){
 
-            AttributeValue::create([
+            AttributeValue::firstOrCreate([
 
                 'attribute_id'=>$size->id,
 

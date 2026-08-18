@@ -4,57 +4,40 @@ namespace Database\Seeders;
 
 use App\Models\Unit;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class UnitSeeder extends Seeder
 {
     public function run(): void
     {
         $units = [
-
-            ['Piece','PCS','pc'],
-            ['Box','BOX','box'],
-            ['Carton','CTN','ctn'],
-            ['Kilogram','KG','kg'],
-            ['Gram','GM','g'],
-            ['Liter','LTR','L'],
-            ['Milliliter','ML','ml'],
-            ['Meter','MTR','m'],
-            ['Centimeter','CM','cm'],
-            ['Foot','FT','ft'],
-            ['Inch','IN','in'],
-            ['Pack','PK','pk'],
-            ['Set','SET','set'],
-            ['Pair','PAIR','pair'],
-            ['Roll','ROLL','roll'],
-            ['Pallet','PLT','plt'],
-
+            ['name' => 'Piece', 'code' => 'PC', 'symbol' => 'pc'],
+            ['name' => 'Dozen', 'code' => 'DZ', 'symbol' => 'dz'],
+            ['name' => 'Pair', 'code' => 'PR', 'symbol' => 'pr'],
+            ['name' => 'Set', 'code' => 'SET', 'symbol' => 'set'],
+            ['name' => 'Box', 'code' => 'BOX', 'symbol' => 'box'],
+            ['name' => 'Carton', 'code' => 'CTN', 'symbol' => 'ctn'],
+            ['name' => 'Pallet', 'code' => 'PLT', 'symbol' => 'plt'],
+            ['name' => 'Pack', 'code' => 'PACK', 'symbol' => 'pack'],
+            ['name' => 'Bag', 'code' => 'BAG', 'symbol' => 'bag'],
+            ['name' => 'Roll', 'code' => 'ROLL', 'symbol' => 'roll'],
+            ['name' => 'Kilogram', 'code' => 'KG', 'symbol' => 'kg'],
+            ['name' => 'Gram', 'code' => 'G', 'symbol' => 'g'],
+            ['name' => 'Ton', 'code' => 'TON', 'symbol' => 't'],
+            ['name' => 'Liter', 'code' => 'L', 'symbol' => 'L'],
+            ['name' => 'Meter', 'code' => 'M', 'symbol' => 'm'],
+            ['name' => 'Square Meter', 'code' => 'SQM', 'symbol' => 'm²'],
         ];
 
-        foreach ($units as $unit) {
-
+        foreach ($units as $index => $unit) {
             Unit::updateOrCreate(
-
+                ['code' => $unit['code']],
                 [
-                    'code' => $unit[1]
-                ],
-
-                [
-
-                    'uuid' => (string) Str::uuid(),
-
-                    'name' => $unit[0],
-
-                    'code' => $unit[1],
-
-                    'symbol' => $unit[2],
-
+                    'name' => $unit['name'],
+                    'symbol' => $unit['symbol'],
+                    'sort_order' => $index,
                     'status' => true,
-
                 ]
-
             );
-
         }
     }
 }
