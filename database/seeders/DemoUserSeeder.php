@@ -24,7 +24,7 @@ class DemoUserSeeder extends Seeder
                 'last_name' => 'Admin',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
-                'status' => true,
+                'status' => 'active',
             ]
         );
         $superAdmin->syncRoles(['Super Admin']);
@@ -36,7 +36,7 @@ class DemoUserSeeder extends Seeder
                 'last_name' => 'Ops',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
-                'status' => true,
+                'status' => 'active',
             ]
         );
         $admin->syncRoles(['Admin']);
@@ -63,7 +63,7 @@ class DemoUserSeeder extends Seeder
                     'last_name' => explode(' ', $def['contact'])[1] ?? '',
                     'password' => Hash::make('password'),
                     'email_verified_at' => now(),
-                    'status' => true,
+                    'status' => 'active',
                 ]
             );
             $user->syncRoles(['Supplier']);
@@ -103,7 +103,7 @@ class DemoUserSeeder extends Seeder
                 'last_name' => 'Reyes',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
-                'status' => true,
+                'status' => 'active',
             ]
         );
         $pendingUser->syncRoles(['Supplier']);
@@ -128,7 +128,7 @@ class DemoUserSeeder extends Seeder
                 'last_name' => 'Petrova',
                 'password' => Hash::make('password'),
                 'email_verified_at' => now(),
-                'status' => true,
+                'status' => 'active',
             ]
         );
         $rejectedUser->syncRoles(['Supplier']);
@@ -179,7 +179,7 @@ class DemoUserSeeder extends Seeder
                     'last_name' => $last,
                     'password' => Hash::make('password'),
                     'email_verified_at' => now(),
-                    'status' => true,
+                    'status' => 'active',
                     'avatar' => 'seed/avatars/a' . ($i % 10 + 1) . '.jpg',
                 ]
             );
