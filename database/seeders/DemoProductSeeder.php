@@ -120,7 +120,7 @@ class DemoProductSeeder extends Seeder
             for ($img = 0; $img < 3; $img++) {
                 ProductImage::create([
                     'product_id' => $product->id,
-                    'image' => 'seed/products/p' . ((($i * 3 + $img) % 48) + 1) . '.jpg',
+                    'image' => 'https://picsum.photos/seed/bulkare-product-' . ((($i * 3 + $img) % 48) + 1) . '/800/800',
                     'alt_text' => $name,
                     'is_primary' => $img === 0,
                     'sort_order' => $img,

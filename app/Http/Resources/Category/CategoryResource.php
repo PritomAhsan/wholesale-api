@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Category;
 
+use App\Support\MediaUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -10,7 +11,7 @@ class CategoryResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            'id' => $this->id,     
+            'id' => $this->id,
 
             'uuid' => $this->uuid,
 
@@ -24,13 +25,9 @@ class CategoryResource extends JsonResource
 
             'description' => $this->description,
 
-            'image' => $this->image
-                ? asset('storage/' . $this->image)
-                : null,
+            'image' => MediaUrl::resolve($this->image),
 
-            'icon' => $this->icon
-                ? asset('storage/' . $this->icon)
-                : null,
+            'icon' => MediaUrl::resolve($this->icon),
 
             'sort_order' => $this->sort_order,
 

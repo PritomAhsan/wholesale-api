@@ -66,7 +66,7 @@ class BrandSeeder extends Seeder
 
                     'slug' => Str::slug($brand),
 
-                    'logo' => 'seed/logos/l' . ($index % 10 + 1) . '.jpg',
+                    'logo' => 'https://picsum.photos/seed/bulkare-logo-' . ($index % 10 + 1) . '/300/300',
 
                     'status' => true,
 

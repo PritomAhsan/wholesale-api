@@ -4,6 +4,7 @@ namespace App\Http\Resources\Supplier;
 
 use App\Models\StoreFollow;
 use App\Services\Supplier\SellerVerificationScoreService;
+use App\Support\MediaUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -33,13 +34,9 @@ class SupplierPublicResource extends JsonResource
 
             'member_since' => $this->approved_at ?? $this->created_at,
 
-            'logo' => $this->logo
-                ? asset('storage/' . $this->logo)
-                : null,
+            'logo' => MediaUrl::resolve($this->logo),
 
-            'banner' => $this->banner
-                ? asset('storage/' . $this->banner)
-                : null,
+            'banner' => MediaUrl::resolve($this->banner),
 
             // Controller pre-loads `products` scoped to published listings
             // only, so both fields below reflect live, buyer-visible

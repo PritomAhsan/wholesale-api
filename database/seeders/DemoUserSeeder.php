@@ -83,8 +83,8 @@ class DemoUserSeeder extends Seeder
                     'fulfillment_region' => $def['region'],
                     'typical_lead_time' => [3, 5, 7, 10, 14][$i % 5] . ' business days',
                     'commission_rate' => [8, 10, 10, 12, 9, 10, 11, 10][$i],
-                    'logo' => 'seed/logos/l' . ($i % 10 + 1) . '.jpg',
-                    'banner' => 'seed/banners/b' . ($i % 10 + 1) . '.jpg',
+                    'logo' => 'https://picsum.photos/seed/bulkare-logo-' . ($i % 10 + 1) . '/300/300',
+                    'banner' => 'https://picsum.photos/seed/bulkare-banner-' . ($i % 10 + 1) . '/1200/300',
                     'status' => 'approved',
                     'approved_at' => now()->subDays(rand(30, 200)),
                     'approved_by' => $superAdmin->id,
@@ -180,7 +180,7 @@ class DemoUserSeeder extends Seeder
                     'password' => Hash::make('password'),
                     'email_verified_at' => now(),
                     'status' => 'active',
-                    'avatar' => 'seed/avatars/a' . ($i % 10 + 1) . '.jpg',
+                    'avatar' => 'https://picsum.photos/seed/bulkare-avatar-' . ($i % 10 + 1) . '/200/200',
                 ]
             );
             $customer->syncRoles(['Customer']);

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use App\Support\MediaUrl;
 
 class ProductVariantImage extends Model
 {
@@ -50,9 +51,9 @@ class ProductVariantImage extends Model
         return $this->belongsTo(ProductVariant::class, 'product_variant_id');
     }
 
-    public function getImageUrlAttribute(): string
+    public function getImageUrlAttribute(): ?string
     {
-        return asset('storage/' . $this->image);
+        return MediaUrl::resolve($this->image);
     }
 
     public function getRouteKeyName(): string

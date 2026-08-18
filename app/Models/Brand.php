@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Storage;
+use App\Support\MediaUrl;
 
 class Brand extends Model
 {
@@ -76,12 +76,6 @@ class Brand extends Model
 
     public function getLogoUrlAttribute(): ?string
     {
-        if (!$this->logo) {
-            return null;
-        }
-
-        return Storage::disk('public')->url(
-            $this->logo
-        );
+        return MediaUrl::resolve($this->logo);
     }
 }

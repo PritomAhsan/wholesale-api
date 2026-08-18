@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Supplier;
 
+use App\Support\MediaUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -45,13 +46,9 @@ class SupplierResource extends JsonResource
 
             'effective_commission_rate' => $this->effective_commission_rate,
 
-            'logo' => $this->logo
-                ? asset('storage/' . $this->logo)
-                : null,
+            'logo' => MediaUrl::resolve($this->logo),
 
-            'banner' => $this->banner
-                ? asset('storage/' . $this->banner)
-                : null,
+            'banner' => MediaUrl::resolve($this->banner),
 
             'status' => $this->status,
 

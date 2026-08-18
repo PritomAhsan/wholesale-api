@@ -30,7 +30,7 @@ class CategorySeeder extends Seeder
                 [
                     'name' => $parentName,
                     'description' => "Wholesale {$parentName} sourced directly from verified suppliers.",
-                    'image' => 'seed/categories/c' . (($imageIndex - 1) % 10 + 1) . '.jpg',
+                    'image' => 'https://picsum.photos/seed/bulkare-cat-' . (($imageIndex - 1) % 10 + 1) . '/500/500',
                     'sort_order' => $sort++,
                     'status' => true,
                 ]
@@ -44,7 +44,7 @@ class CategorySeeder extends Seeder
                         'parent_id' => $parent->id,
                         'name' => $childName,
                         'description' => "Bulk {$childName} for B2B buyers.",
-                        'image' => 'seed/categories/c' . (($imageIndex - 1) % 10 + 1) . '.jpg',
+                        'image' => 'https://picsum.photos/seed/bulkare-cat-' . (($imageIndex - 1) % 10 + 1) . '/500/500',
                         'sort_order' => $i,
                         'status' => true,
                     ]
