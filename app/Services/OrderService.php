@@ -18,10 +18,11 @@ class OrderService
     /**
      * @param  array<int, array{product_uuid: string, quantity: int}>  $items
      * @param  array<string, mixed>  $shipping
+     * @param  array{carrier: string, service: string, rate: float}|null  $shippingRate  a live Shippo quote the buyer picked (Phase 18 demo, off by default)
      */
-    public function checkout(User $user, array $items, array $shipping): Order
+    public function checkout(User $user, array $items, array $shipping, ?array $shippingRate = null): Order
     {
-        return DB::transaction(function () use ($user, $items, $shipping) {
+        return DB::transaction(function () use ($user, $items, $shipping, $shippingRate) {
 
             $uuids = collect($items)->pluck('product_uuid');
 
@@ -98,6 +99,12 @@ class OrderService
 
                 'shipping_postal_code' => $shipping['postal_code'] ?? null,
 
+                'shipping_cost' => $shippingRate['rate'] ?? null,
+
+                'shipping_carrier' => $shippingRate['carrier'] ?? null,
+
+                'shipping_service' => $shippingRate['service'] ?? null,
+
                 'notes' => $shipping['notes'] ?? null,
 
                 'placed_at' => now(),
@@ -171,7 +178,7 @@ class OrderService
 
             $order->update([
                 'subtotal' => $orderTotal,
-                'total' => $orderTotal,
+                'total' => $orderTotal + ($shippingRate['rate'] ?? 0),
             ]);
 
             // Scaffolding only — no payment gateway is wired up yet, so
@@ -182,7 +189,7 @@ class OrderService
 
                 'order_id' => $order->id,
 
-                'amount' => $orderTotal,
+                'amount' => $orderTotal + ($shippingRate['rate'] ?? 0),
 
                 'currency' => 'USD',
 

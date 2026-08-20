@@ -173,6 +173,11 @@ Route::prefix('v1')->group(function () {
         );
 
         Route::post(
+            '/shipping/rates',
+            [\App\Http\Controllers\Api\V1\Shipping\ShippingRateController::class, 'quote']
+        );
+
+        Route::post(
             '/checkout',
             [OrderController::class, 'store']
         );

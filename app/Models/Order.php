@@ -44,6 +44,12 @@ class Order extends Model
 
         'shipping_postal_code',
 
+        'shipping_cost',
+
+        'shipping_carrier',
+
+        'shipping_service',
+
         'notes',
 
         'placed_at',
@@ -55,6 +61,8 @@ class Order extends Model
         'subtotal' => 'decimal:2',
 
         'total' => 'decimal:2',
+
+        'shipping_cost' => 'decimal:2',
 
         'placed_at' => 'datetime',
 

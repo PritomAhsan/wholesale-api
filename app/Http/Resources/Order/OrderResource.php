@@ -36,6 +36,9 @@ class OrderResource extends JsonResource
                 'city' => $this->shipping_city,
                 'country' => $this->shipping_country,
                 'postal_code' => $this->shipping_postal_code,
+                'cost' => $this->shipping_cost,
+                'carrier' => $this->shipping_carrier,
+                'service' => $this->shipping_service,
             ],
 
             'notes' => $this->notes,

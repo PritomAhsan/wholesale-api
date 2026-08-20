@@ -37,6 +37,17 @@ class StoreCheckoutRequest extends FormRequest
 
             'shipping.notes' => ['nullable', 'string', 'max:1000'],
 
+            // Selected live rate from /shipping/rates (Phase 18 demo, off by
+            // default). Optional — checkout works exactly as before when
+            // Shippo isn't enabled or the buyer didn't pick a rate.
+            'shipping_rate' => ['nullable', 'array'],
+
+            'shipping_rate.carrier' => ['required_with:shipping_rate', 'string', 'max:100'],
+
+            'shipping_rate.service' => ['required_with:shipping_rate', 'string', 'max:100'],
+
+            'shipping_rate.rate' => ['required_with:shipping_rate', 'numeric', 'min:0'],
+
         ];
     }
 }

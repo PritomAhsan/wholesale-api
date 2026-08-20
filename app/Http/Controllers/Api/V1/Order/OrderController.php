@@ -25,7 +25,8 @@ class OrderController extends ApiController
             $order = $this->orderService->checkout(
                 $request->user(),
                 $request->validated()['items'],
-                $request->validated()['shipping']
+                $request->validated()['shipping'],
+                $request->validated()['shipping_rate'] ?? null
             );
 
             return $this->success([
